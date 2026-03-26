@@ -1,0 +1,17 @@
+[
+  {
+    "id": "5jRGBkV7cLVo17TUBe8WdlxWuAO2",
+    "phone": "1234123456",
+    "name": "newe",
+    "role": "worker",
+    "skill": "55",
+    "location": "Wagholi, Maharashtra",
+    "photo": "",
+    "workerType": 1,
+    "otpVerified": true,
+    "lastActive": {},
+    "muktiScore": 0,
+    "status": "pending",
+    "isVerifiedByAdmin": false
+  }
+]

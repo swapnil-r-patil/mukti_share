@@ -670,6 +670,19 @@ const WorkerDashboard = () => {
     { icon: Clock, label: "Last Active", value: getRelativeTime(user.lastActive), color: "text-muted-foreground" },
   ];
 
+  // ===== 7-DAY SCAN REQUIREMENTS (NOTIFICATIONS) =====
+  let lastScanDate = new Date();
+  if (verifications.length > 0) {
+    const dates = verifications.map(v => (v.timestamp instanceof Date ? v.timestamp : new Date(v.timestamp)).getTime());
+    lastScanDate = new Date(Math.max(...dates));
+  } else if (user.createdAt) {
+    lastScanDate = typeof user.createdAt === 'string' ? new Date(user.createdAt) : (user.createdAt as any).toDate ? (user.createdAt as any).toDate() : new Date();
+  }
+
+  const daysSinceScan = Math.floor((new Date().getTime() - lastScanDate.getTime()) / (1000 * 60 * 60 * 24));
+  const qrDaysRemaining = Math.max(0, 7 - daysSinceScan);
+  const qrNeedsScan = qrDaysRemaining <= 0;
+
   return (
     <div className="container mx-auto max-w-7xl py-4 sm:py-6 md:py-10 pb-24 px-3 sm:px-4 lg:px-6 relative overflow-hidden">
       {/* Background Orbs */}
@@ -733,10 +746,58 @@ const WorkerDashboard = () => {
         </div>
       </div>
 
+      {/* 7-Day QR Notification Banner */}
+      {!isDemoWorker && (
+        <div className={`mb-8 p-5 rounded-2xl border flex items-start sm:items-center gap-4 animate-fade-up relative overflow-hidden group ${
+          qrNeedsScan 
+            ? 'bg-red-50/80 border-red-200 shadow-[0_8px_30px_rgb(220,38,38,0.12)]' 
+            : 'bg-[#E6EEF8]/80 border-blue-200/50 shadow-[0_8px_30px_rgb(11,61,145,0.08)]'
+        }`} style={{ animationDelay: "20ms" }}>
+          <div className="absolute inset-0 bg-white/40 blur-xl group-hover:bg-white/60 transition-colors pointer-events-none" />
+          <div className={`relative z-10 p-3.5 rounded-xl shrink-0 ${
+            qrNeedsScan ? 'bg-red-100 text-red-600 shadow-inner' : 'bg-blue-100 text-[#0B3D91] shadow-inner'
+          }`}>
+            <AlertCircle className="w-6 h-6" />
+          </div>
+          <div className="relative z-10 flex-1 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className={`font-black text-lg sm:text-xl italic tracking-tight uppercase ${
+                  qrNeedsScan ? 'text-red-900' : 'text-[#0B3D91]'
+                }`}>
+                  {qrNeedsScan ? "QR SCAN REQUIRED" : "Account Status Active"}
+                </h3>
+                <p className={`text-sm sm:text-base font-medium mt-0.5 ${
+                  qrNeedsScan ? 'text-red-700' : 'text-slate-600'
+                }`}>
+                  {qrNeedsScan 
+                    ? "Your 7-day validation has expired. You must show your QR code to a customer today to stay active."
+                    : `You have ${qrDaysRemaining} day${qrDaysRemaining === 1 ? '' : 's'} remaining before you need to rescan your QR.`}
+                </p>
+              </div>
+              
+              {/* Optional Call To Action Button embedded inside */}
+              {qrNeedsScan && (
+                <button
+                  onClick={() => {
+                    // Quick scroll/action to the QR/Download
+                    document.getElementById('report_download')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white px-5 py-2.5 rounded-xl text-sm font-black italic tracking-widest uppercase shadow-lg shadow-red-500/20 transition-all shrink-0 w-full sm:w-auto"
+                >
+                  View QR
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Quick Action Buttons */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 mb-8 relative z-10 opacity-0 animate-fade-up" style={{ animationDelay: "60ms" }}>
         {(isApproved || user.isVerifiedByAdmin) && (
           <button
+            id="report_download"
             onClick={async () => {
               await generateCreditReport({
                 workerName: user.name,
