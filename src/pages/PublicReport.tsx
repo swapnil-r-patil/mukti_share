@@ -44,42 +44,31 @@ const PublicReport = () => {
 
     const fetchData = async () => {
       try {
-        // Fetch worker profile
-        const userDoc = await getDoc(doc(db, "users", workerId));
-        if (!userDoc.exists()) {
-          setError("Worker not found");
+        // Fetch from backend endpoint to bypass Firebase security rules for unauthenticated users
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const response = await fetch(`${apiUrl}/public-report/${workerId}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError("Worker not found");
+          } else {
+            setError("Failed to load report data");
+          }
           setLoading(false);
           return;
         }
 
-        const userData = userDoc.data() as WorkerData;
-        setWorker(userData);
+        const data = await response.json();
+        setWorker(data.worker as WorkerData);
 
-        // Fetch verifications
-        const vQuery = query(
-          collection(db, "verifications"),
-          where("workerId", "==", workerId),
-          orderBy("timestamp", "desc")
-        );
-        const vSnap = await getDocs(vQuery);
-        const vList = vSnap.docs.map((d) => ({
-          id: d.id,
-          ...d.data(),
-          timestamp: d.data().timestamp?.toDate?.() || new Date(),
+        const vList = data.verifications.map((d: any) => ({
+          ...d,
+          timestamp: new Date(d.timestamp || Date.now())
         }));
 
-        // Fetch completed work_requests
-        const wQuery = query(
-          collection(db, "work_requests"),
-          where("acceptedBy", "==", workerId),
-          where("status", "==", "Completed")
-        );
-        const wSnap = await getDocs(wQuery);
-        const wList = wSnap.docs.map((d) => ({
-          id: d.id,
-          ...d.data(),
-          timestamp: d.data().completedAt?.toDate?.() || new Date(),
-          rating: d.data().rating || 4,
+        const wList = data.workRequests.map((d: any) => ({
+          ...d,
+          timestamp: new Date(d.timestamp || Date.now())
         }));
 
         // Merge

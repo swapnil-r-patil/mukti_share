@@ -837,6 +837,93 @@ app.put('/api/work-request/:id', async (req, res) => {
   }
 });
 
+// 5. Public Report Fetch (Bypass Firestore Security Rules for unauthenticated users scanning QR)
+app.get('/api/public-report/:workerId', async (req, res) => {
+  try {
+    const { workerId } = req.params;
+    let worker: any = null;
+
+    if (isFirebaseEnabled && db && !workerId.startsWith('local-')) {
+      const userDoc = await db.collection('users').doc(workerId).get();
+      if (userDoc.exists) {
+        worker = userDoc.data();
+      }
+    }
+
+    // Fallback: local user
+    if (!worker) {
+      const localUsers = getLocalUsers();
+      worker = localUsers.find((u: any) => u.id === workerId);
+    }
+
+    if (!worker) {
+      return res.status(404).json({ error: 'Worker not found' });
+    }
+
+    let verifications: any[] = [];
+    let workRequests: any[] = [];
+
+    // 2. Get verifications
+    if (isFirebaseEnabled && db) {
+      try {
+        const vSnap = await db.collection('verifications')
+          .where('workerId', '==', workerId)
+          .orderBy('timestamp', 'desc')
+          .get();
+        
+        verifications = vSnap.docs.map(d => {
+          const data = d.data();
+          return {
+            id: d.id,
+            ...data,
+            timestamp: data.timestamp?.toDate ? data.timestamp.toDate().toISOString() : data.timestamp,
+          };
+        });
+      } catch (e) {}
+    }
+
+    // 3. Get completed work requests
+    if (isFirebaseEnabled && db) {
+      try {
+        const wSnap = await db.collection('work_requests')
+          .where('acceptedBy', '==', workerId)
+          .where('status', '==', 'Completed')
+          .get();
+        
+        workRequests = wSnap.docs.map(d => {
+          const data = d.data();
+          return {
+            id: d.id,
+            ...data,
+            timestamp: data.completedAt?.toDate ? data.completedAt.toDate().toISOString() : data.completedAt,
+            rating: data.rating || 4,
+          };
+        });
+      } catch (e) {}
+    }
+
+    // Include local requests for fallback demo workers
+    if (workRequests.length === 0) {
+       const localReqs = getLocalWorkRequests();
+       const localWorkerReqs = localReqs.filter((r: any) => r.acceptedBy === workerId && r.status === 'Completed');
+       workRequests = localWorkerReqs.map((r: any) => ({
+           ...r,
+           timestamp: typeof r.completedAt === 'string' ? r.completedAt : new Date().toISOString(),
+           rating: r.rating || 4
+       }));
+    }
+
+    res.json({
+      worker,
+      verifications,
+      workRequests
+    });
+  } catch (err: any) {
+    console.error('[PUBLIC-REPORT-ERROR]:', err.message);
+    res.status(500).json({ error: 'Failed to fetch public report data' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Mukti-Backend running on http://localhost:${PORT}`);
 });
