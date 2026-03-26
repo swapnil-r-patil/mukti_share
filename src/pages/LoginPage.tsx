@@ -274,7 +274,7 @@ const LoginPage = () => {
                         e.preventDefault(); e.stopPropagation();
                         await login("1234567890", "123456");
                       }}
-                      className="flex-1 py-3 px-2 text-[10px] sm:text-[11px] font-black rounded-xl border border-accent/30 bg-accent/10 text-accent hover:bg-accent/20 transition-all active:scale-95 shadow-sm cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis"
+                      className="flex-1 py-3 px-2 text-[10px] sm:text-[11px] font-black rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 transition-all active:scale-95 shadow-sm cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis"
                     >
                       Customer
                     </button>
