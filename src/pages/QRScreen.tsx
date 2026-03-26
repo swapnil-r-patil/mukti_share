@@ -7,13 +7,14 @@ import { QRCodeSVG } from "qrcode.react";
 const QR_EXPIRY_SECONDS = 300; // 5 minutes
 
 const QRScreen = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, syncLocation } = useAuth();
   const navigate = useNavigate();
   const [secondsLeft, setSecondsLeft] = useState(QR_EXPIRY_SECONDS);
   const [isExpired, setIsExpired] = useState(false);
   const [sessionId, setSessionId] = useState(() => Date.now().toString(36));
   const [verificationCode, setVerificationCode] = useState(() => Math.random().toString(36).substring(2, 8).toUpperCase());
   const [isSyncing, setIsSyncing] = useState(true);
+  const [isGpsLocked, setIsGpsLocked] = useState(false);
   const [qrCount, setQrCount] = useState(() => {
     const saved = localStorage.getItem(`qr_count_${user?.id}`);
     const today = new Date().toDateString();
@@ -35,19 +36,27 @@ const QRScreen = () => {
     const syncPulse = async () => {
       if (user && !isExpired && !user.isDemo) {
         setIsSyncing(true);
+        setIsGpsLocked(false);
         try {
+          // 1. Sync current GPS first for perfect handshake
+          await syncLocation();
+          setIsGpsLocked(true);
+          
+          // 2. Sync security pulse
           await updateUser({ 
             activeVerificationCode: verificationCode, 
             activeSessionId: sessionId 
           });
+          
           // Small buffer to ensure Firestore propagation
           setTimeout(() => setIsSyncing(false), 500);
         } catch (e) {
-          console.error("Pulse sync failed:", e);
+          console.error("Perfect Pulse sync failed:", e);
           setIsSyncing(false);
         }
       } else if (user?.isDemo) {
         setIsSyncing(false);
+        setIsGpsLocked(true);
       }
     };
     syncPulse();
@@ -93,7 +102,15 @@ const QRScreen = () => {
           </button>
           <div className="text-center flex-1">
              <h2 className="text-2xl font-black italic tracking-tighter text-white uppercase italic">Verification ID</h2>
-             <p className="text-slate-600 text-[9px] font-black uppercase tracking-[0.4em] mt-1 pr-8">Handshake Protocol Active</p>
+             <div className="flex items-center justify-center gap-2 mt-1">
+               <p className="text-slate-600 text-[9px] font-black uppercase tracking-[0.4em]">Handshake Protocol Active</p>
+               {isGpsLocked && (
+                 <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[8px] font-black uppercase tracking-widest animate-in fade-in zoom-in slide-in-from-right-1 duration-500">
+                    <div className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />
+                    GPS Locked
+                 </div>
+               )}
+             </div>
           </div>
        </div>
 
