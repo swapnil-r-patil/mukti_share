@@ -5,7 +5,7 @@ import { calculateIncomeStats, parseBudgetToAmount } from "@/utils/financial";
 import { DEMO_VERIFICATIONS, MONTHLY_DATA, getRepeatCustomers, DEMO_DASHBOARD_DATA } from "@/data/demoData";
 import { getTrustLevel, getTrustBadgeColor, calculateTrustScore } from "@/utils/trustEngine";
 import { analyzeReview } from "@/utils/nlpProcessor";
-import { Briefcase, Star, TrendingUp, Users, ChevronRight, QrCode, ShieldCheck, ShieldAlert, Clock, MapPin, Wrench, X, Wallet, MessageSquare, Search, User as LucideUser, History as LucideHistory, AlertCircle, Lock, Phone } from "lucide-react";
+import { Briefcase, Star, TrendingUp, Users, ChevronRight, QrCode, ShieldCheck, ShieldAlert, Clock, MapPin, Wrench, X, Wallet, MessageSquare, Search, User as LucideUser, History as LucideHistory, AlertCircle, Lock, Phone, RotateCw } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 import StarRating from "@/components/StarRating";
@@ -698,7 +698,7 @@ const WorkerDashboard = () => {
                         disabled={isUpdatingLocation}
                         className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-500 hover:text-white transition-all disabled:opacity-50"
                       >
-                         <RefreshCw size={10} className={isUpdatingLocation ? "animate-spin" : ""} />
+                         <RotateCw size={10} className={isUpdatingLocation ? "animate-spin" : ""} />
                       </button>
                     </div>
                   </div>
