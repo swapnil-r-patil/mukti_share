@@ -1,6 +1,7 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 import { auth, db, googleProvider } from "@/lib/firebase";
 import { getDeviceId, isSessionValid } from "@/utils/device";
+import { getCurrentPosition, reverseGeocode } from "@/utils/geoValidator";
 import { 
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
@@ -27,11 +28,12 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (phone: string, password?: string) => Promise<void>;
-  signup: (phone: string, role: UserRole, name: string, password?: string, skill?: string, location?: string, photo?: string, workerType?: WorkerType, employerName?: string, employerPhone?: string) => Promise<void>;
+  signup: (phone: string, role: UserRole, name: string, password?: string, skill?: string, location?: string, photo?: string, workerType?: WorkerType, employerName?: string, employerPhone?: string, locationCoords?: {lat: number, lng: number}) => Promise<void>;
   signInWithGoogle: (role: UserRole) => Promise<void>;
   updateUser: (updates: Partial<User>) => Promise<void>;
   addPoints: (amount: number, badgeStr?: string) => Promise<void>;
   logout: () => Promise<void>;
+  syncLocation: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -124,6 +126,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     return () => unsubscribeAuth();
   }, []);
+
+  // Auto-sync location when user is loaded
+  useEffect(() => {
+    if (user && !user.isDemo) {
+      syncLocation();
+    }
+  }, [user?.id]);
+
+  async function syncLocation() {
+    if (!user || user.isDemo) return;
+    try {
+      const pos = await getCurrentPosition();
+      const city = await reverseGeocode(pos.lat, pos.lng);
+      
+      await updateDoc(doc(db, "users", user.id), {
+        location: city,
+        location_coords: { lat: pos.lat, lng: pos.lng },
+        lastActive: serverTimestamp()
+      });
+      
+      setUser(prev => prev ? { ...prev, location: city, location_coords: { lat: pos.lat, lng: pos.lng } } : null);
+    } catch (err) {
+      console.warn("Location sync failed:", err);
+    }
+  }
 
   async function login(phone: string, password?: string) {
     if ((phone === "1234567891" || phone === "1234567890" || phone === "1234567892") && password === "123456") {
@@ -233,7 +260,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     photo?: string,
     workerType?: WorkerType,
     employerName?: string,
-    employerPhone?: string
+    employerPhone?: string,
+    locationCoords?: {lat: number, lng: number}
   ) {
     let firebaseUser;
     try {
@@ -255,7 +283,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name, 
       role, 
       skill, 
-      location, 
+      location: location || "Unknown", 
+      location_coords: locationCoords || null,
       photo, 
       workerType,
       employerName,
@@ -345,7 +374,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, signInWithGoogle, updateUser, addPoints, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, signInWithGoogle, updateUser, addPoints, logout, syncLocation, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

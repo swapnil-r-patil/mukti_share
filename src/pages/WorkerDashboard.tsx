@@ -51,7 +51,13 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 };
 
 const WorkerDashboard = () => {
-  const { user, updateUser } = useAuth();
+  const { 
+    user, 
+    updateUser, 
+    addPoints, 
+    syncLocation,
+    loading 
+  } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [verifications, setVerifications] = useState<any[]>([]);
@@ -63,6 +69,7 @@ const WorkerDashboard = () => {
   const [activeRequests, setActiveRequests] = useState<WorkRequest[]>([]);
   const [showAllRequests, setShowAllRequests] = useState(false);
   const [selectedVerification, setSelectedVerification] = useState<any | null>(null);
+  const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
 
   // Filter available jobs (status Searching) for the public feed
   const availableJobs = activeRequests.filter(r => r.status === "Searching");
@@ -675,6 +682,26 @@ const WorkerDashboard = () => {
           <div className="min-w-0">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black italic tracking-tighter text-white uppercase truncate">
               {t('welcome')}, {user.name.split(" ")[0]} 
+                           <div className="flex flex-col">
+                    <span className="text-2xl font-black text-white italic tracking-tighter uppercase">{user.name}</span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <MapPin size={10} className="text-orange-500" />
+                        <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest">{user.location || "Detecting..."}</span>
+                      </div>
+                      <button 
+                        onClick={async () => {
+                          setIsUpdatingLocation(true);
+                          await syncLocation();
+                          setIsUpdatingLocation(false);
+                        }}
+                        disabled={isUpdatingLocation}
+                        className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-500 hover:text-white transition-all disabled:opacity-50"
+                      >
+                         <RefreshCw size={10} className={isUpdatingLocation ? "animate-spin" : ""} />
+                      </button>
+                    </div>
+                  </div>
             </h2>
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mt-2 pl-1 italic">
               {Number(user.workerType) === 0 ? "CENTRAL REGISTRY ACCESS GRANTED" : "TACTICAL WORK OVERVIEW ACTIVE"}

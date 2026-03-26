@@ -13,6 +13,7 @@ const QRScreen = () => {
   const [isExpired, setIsExpired] = useState(false);
   const [sessionId, setSessionId] = useState(() => Date.now().toString(36));
   const [verificationCode, setVerificationCode] = useState(() => Math.random().toString(36).substring(2, 8).toUpperCase());
+  const [isSyncing, setIsSyncing] = useState(true);
   const [qrCount, setQrCount] = useState(() => {
     const saved = localStorage.getItem(`qr_count_${user?.id}`);
     const today = new Date().toDateString();
@@ -31,15 +32,26 @@ const QRScreen = () => {
   }, [qrCount, user?.id]);
 
   useEffect(() => {
-    if (user && !isExpired) {
-      if (!user.isDemo) {
-        updateUser({ 
-           activeVerificationCode: verificationCode, 
-           activeSessionId: sessionId 
-        });
+    const syncPulse = async () => {
+      if (user && !isExpired && !user.isDemo) {
+        setIsSyncing(true);
+        try {
+          await updateUser({ 
+            activeVerificationCode: verificationCode, 
+            activeSessionId: sessionId 
+          });
+          // Small buffer to ensure Firestore propagation
+          setTimeout(() => setIsSyncing(false), 500);
+        } catch (e) {
+          console.error("Pulse sync failed:", e);
+          setIsSyncing(false);
+        }
+      } else if (user?.isDemo) {
+        setIsSyncing(false);
       }
-    }
-  }, [sessionId, verificationCode, isExpired, user, updateUser]);
+    };
+    syncPulse();
+  }, [sessionId, verificationCode, isExpired, user?.isDemo]);
 
   useEffect(() => {
     if (secondsLeft <= 0) {
@@ -108,18 +120,23 @@ const QRScreen = () => {
           </svg>
           
           {/* QR placeholder */}
-          <div className={`flex h-60 w-60 items-center justify-center rounded-[2.5rem] border-2 border-dashed transition-all duration-500 ${isExpired ? "border-red-500/20 bg-red-500/5" : "border-orange-500/30 bg-orange-500/5 shadow-[inset_0_0_40px_rgba(249,115,22,0.05)]"}`}>
+          <div className={`flex h-64 w-64 items-center justify-center rounded-[2.5rem] border-2 border-dashed transition-all duration-500 ${isExpired ? "border-red-500/20 bg-red-500/5" : "border-orange-500/30 bg-orange-500/5 shadow-[inset_0_0_40px_rgba(249,115,22,0.05)]"}`}>
             {isExpired ? (
               <div className="flex flex-col items-center gap-3">
                  <AlertCircle size={40} className="text-red-500" />
                  <div className="text-[10px] font-black text-red-500 uppercase tracking-widest italic">Signal Expired</div>
               </div>
+            ) : isSyncing ? (
+              <div className="flex flex-col items-center gap-4 animate-pulse">
+                <RefreshCw size={32} className="text-orange-500 animate-spin" />
+                <div className="text-[9px] font-black text-orange-500 uppercase tracking-[0.3em]">Syncing Handshake...</div>
+              </div>
             ) : (
-              <div className="bg-white p-4 rounded-[2rem] shadow-2xl shadow-orange-500/20 transform hover:scale-105 transition-transform duration-500">
+              <div className="bg-white p-5 rounded-[2rem] shadow-2xl shadow-orange-500/20 transform hover:scale-105 transition-transform duration-500">
                 <QRCodeSVG 
                   value={`${window.location.origin}/verify/${user.id}/${sessionId}`}
-                  size={180}
-                  level="H"
+                  size={200}
+                  level="M"
                   includeMargin={false}
                 />
               </div>

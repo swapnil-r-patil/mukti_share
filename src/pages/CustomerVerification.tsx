@@ -154,7 +154,7 @@ const CustomerVerification = () => {
   useEffect(() => {
     if (urlWorkerId && urlWorkerId !== "request") {
       setStep("form");
-      const fetchWorker = async () => {
+      const fetchWorker = async (retryCount = 0) => {
         try {
           const wDoc = await getDoc(doc(db, "users", urlWorkerId));
           if (wDoc.exists()) {
@@ -162,7 +162,13 @@ const CustomerVerification = () => {
             
             // Security Check: Validate sessionId if provided in URL (Direct Scan)
             if (urlJobId && workerData.activeSessionId && workerData.activeSessionId !== urlJobId) {
-              setErrorMsg("Identity pulse timeout. This QR code has expired.");
+              if (retryCount < 3) {
+                 // Retry after a short delay to account for Firestore sync lag
+                 console.log(`Sync lag detected. Retrying handshake validation... (Attempt ${retryCount + 1})`);
+                 setTimeout(() => fetchWorker(retryCount + 1), 1000);
+                 return;
+              }
+              setErrorMsg("Identity pulse timeout. This QR code has expired or the worker regenerated it. Please ask the worker to show the current QR code.");
               setStep("error");
               return;
             }

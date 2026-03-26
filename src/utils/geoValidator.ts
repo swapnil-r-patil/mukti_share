@@ -98,3 +98,28 @@ export const getCurrentPosition = (): Promise<{ lat: number; lng: number }> => {
     );
   });
 };
+
+/**
+ * Reverse geocodes coordinates to a human-readable city/area name.
+ * Uses OpenStreetMap's Nominatim (free, open source).
+ */
+export const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en`
+    );
+    const data = await response.json();
+    
+    // Attempt to find the most relevant city/town name
+    const address = data.address;
+    const city = address.city || address.town || address.village || address.suburb || address.county;
+    const state = address.state;
+    
+    if (city && state) return `${city}, ${state}`;
+    if (city) return city;
+    return data.display_name.split(",")[0] || "Unknown Location";
+  } catch (err) {
+    console.error("Reverse geocode failed:", err);
+    return "Unknown Location";
+  }
+};

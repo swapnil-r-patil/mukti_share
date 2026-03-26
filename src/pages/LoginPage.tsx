@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { UserRole, WorkerType } from "@/types/auth";
-import { Briefcase, User, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { Briefcase, User, AlertCircle, Eye, EyeOff, Crosshair, MapPin, Loader2 } from "lucide-react";
+import { getCurrentPosition, reverseGeocode } from "@/utils/geoValidator";
+import { toast } from "sonner";
 
 const LoginPage = () => {
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
@@ -26,6 +28,8 @@ const LoginPage = () => {
   const [photo, setPhoto] = useState<string>("");
   const [employerName, setEmployerName] = useState("");
   const [employerPhone, setEmployerPhone] = useState("");
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
+  const [locationCoords, setLocationCoords] = useState<{lat: number, lng: number} | null>(null);
 
   const { user, login, signup, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -102,6 +106,29 @@ const LoginPage = () => {
     }
   };
 
+  // Auto-detect location for details step
+  useEffect(() => {
+    if (signupStep === "details" && !location) {
+      handleDetectLocation();
+    }
+  }, [signupStep]);
+
+  const handleDetectLocation = async () => {
+    setIsDetectingLocation(true);
+    try {
+      const pos = await getCurrentPosition();
+      setLocationCoords(pos);
+      const city = await reverseGeocode(pos.lat, pos.lng);
+      setLocation(city);
+      toast.success(`Location detected: ${city}`);
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Location detection failed. Please enter manually.");
+    } finally {
+      setIsDetectingLocation(false);
+    }
+  };
+
   const handleDetailsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -113,7 +140,10 @@ const LoginPage = () => {
         skill, 
         location, 
         photo,
-        workerType
+        workerType,
+        undefined, // employerName
+        undefined, // employerPhone
+        locationCoords || undefined
       );
     } catch (err: any) {
       alert(`Failed to complete profile: ${err.message}`);
@@ -474,12 +504,23 @@ const LoginPage = () => {
                         setWorkerType(isFixed ? 0 : 1);
                       }}
                     />
-                    <input
-                      type="text" value={location} onChange={(e) => setLocation(e.target.value)}
-                      placeholder="Location"
-                      className="w-full rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
-                      required
-                    />
+                    <div className="relative group">
+                      <input
+                        type="text" value={location} onChange={(e) => setLocation(e.target.value)}
+                        placeholder="Location (Auto-detecting...)"
+                        className="w-full rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm px-4 py-3.5 pr-12 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={handleDetectLocation}
+                        disabled={isDetectingLocation}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-all disabled:opacity-50"
+                        title="Detect Current Location"
+                      >
+                        {isDetectingLocation ? <Loader2 size={16} className="animate-spin" /> : <Crosshair size={16} />}
+                      </button>
+                    </div>
 
                     <button
                       type="submit"

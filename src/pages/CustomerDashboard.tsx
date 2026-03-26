@@ -30,14 +30,16 @@ import {
   Search,
   PlusCircle,
   HelpCircle,
-  Clock
+  Clock,
+  RefreshCw
 } from "lucide-react";
 import StarRating from "@/components/StarRating";
 import { getTrustLevel, getTrustBadgeColor, classifyCustomer, VerificationRecord, calculateTrustScore } from "@/utils/trustEngine";
 import { analyzeReview, NLPResult } from "@/utils/nlpProcessor";
 
 const CustomerDashboard = () => {
-  const { user } = useAuth();
+  const { user, syncLocation } = useAuth();
+  const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
   const navigate = useNavigate();
   const [verifications, setVerifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,9 +122,28 @@ const CustomerDashboard = () => {
         <h2 className="text-3xl sm:text-4xl font-black italic tracking-tighter text-white uppercase italic leading-tight">
           Welcome Back, {user.name.split(" ")[0]} 
         </h2>
-        <p className="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mt-2 pl-1 italic">
-          REGISTRY OVERSIGHT & TRUST CONTROL ACTIVE
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 mt-2 pl-1 italic">
+          <p className="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">
+            REGISTRY OVERSIGHT & TRUST CONTROL ACTIVE
+          </p>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 border border-orange-500/20">
+              <MapPin size={10} className="text-orange-500" />
+              <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest">{user.location || "Detecting..."}</span>
+            </div>
+            <button 
+              onClick={async () => {
+                setIsUpdatingLocation(true);
+                await syncLocation();
+                setIsUpdatingLocation(false);
+              }}
+              disabled={isUpdatingLocation}
+              className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-500 hover:text-white transition-all disabled:opacity-50"
+            >
+               <RefreshCw size={10} className={isUpdatingLocation ? "animate-spin" : ""} />
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
