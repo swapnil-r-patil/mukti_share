@@ -52,6 +52,7 @@ const cleanObject = (obj: any) => {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [initError, setInitError] = useState<string | null>(null);
 
   useEffect(() => {
     // Check for persisted demo session
@@ -70,7 +71,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    // --- Vercel Reliability Hotfix: Loading Safety Timeout ---
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        console.warn("Auth initialization timed out (5s). Forcing load sequence...");
+        // Check for missing config which is the #1 cause for Vercel hangs
+        if (!import.meta.env.VITE_FIREBASE_API_KEY) {
+          setInitError("Firebase Config Missing: Please add VITE_FIREBASE_API_KEY to Vercel Environment Variables.");
+        }
+        setLoading(false);
+      }
+    }, 5000);
+
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
+      clearTimeout(timeoutId);
       if (firebaseUser) {
         // If we have a firebase user, clear demo session
         localStorage.removeItem("mukti_demo_user");
@@ -83,7 +97,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const docSnap = await getDoc(userDocRef);
             if (docSnap.exists()) {
               const data = docSnap.data();
-              const currentDeviceId = getDeviceId();
               const lastOtp = data.lastOtpDate ? (data.lastOtpDate as Timestamp).toDate() : null;
               
               const isAdmin = firebaseUser.email === "astrotopg@gmail.com";
@@ -124,7 +137,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       }
     });
-    return () => unsubscribeAuth();
+    return () => {
+      clearTimeout(timeoutId);
+      unsubscribeAuth();
+    };
   }, []);
 
   // Auto-sync location when user is loaded
@@ -359,14 +375,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-[#020617]">
-        <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-6 max-w-sm px-6 text-center">
           <div className="relative">
-            <div className="h-16 w-16 animate-spin rounded-full border-4 border-orange-500/20 border-t-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.3)]"></div>
-            <div className="absolute inset-0 h-16 w-16 animate-pulse rounded-full bg-orange-500/10 blur-xl"></div>
+            <div className={`h-16 w-16 animate-spin rounded-full border-4 ${initError ? 'border-red-500/20 border-t-red-500' : 'border-orange-500/20 border-t-orange-500Shadow-[0_0_20px_rgba(249,115,22,0.3)]'}`}></div>
+            <div className={`absolute inset-0 h-16 w-16 animate-pulse rounded-full ${initError ? 'bg-red-500/10' : 'bg-orange-500/10'} blur-xl`}></div>
           </div>
-          <div className="flex flex-col items-center gap-1">
+          <div className="flex flex-col items-center gap-2">
             <h2 className="text-lg font-black text-white tracking-wider uppercase">Mukti Portal</h2>
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] animate-pulse">Initialising Secure Session</p>
+            <p className={`text-[10px] font-bold ${initError ? 'text-red-500' : 'text-slate-500'} uppercase tracking-[0.2em] animate-pulse`}>
+              {initError || "Initialising Secure Session"}
+            </p>
+            {initError && (
+              <button 
+                onClick={() => window.location.reload()}
+                className="mt-4 px-6 py-2 rounded-xl bg-white/5 border border-white/10 text-[9px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-all"
+              >
+                Retry Connection
+              </button>
+            )}
           </div>
         </div>
       </div>
