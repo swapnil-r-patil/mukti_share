@@ -38,8 +38,40 @@ const AdminFraud = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleAction = async (id: string, action: string) => {
-     toast.success(`${action.toUpperCase()} action successfully logged`);
+  const handleAction = async (id: string, action: string, workerId?: string) => {
+    if (isDemo) {
+      toast.error('Action disabled in demo mode');
+      return;
+    }
+    
+    try {
+      if (action === "ignore") {
+        await updateDoc(doc(db, "verifications", id), { fraudAction: "ignored" });
+        if (workerId) {
+          await updateDoc(doc(db, "users", workerId), {
+            isBanned: false,
+            status: "active",
+            accountStatus: "active"
+          });
+        }
+        toast.success("Alert ignored and worker ban removed");
+      } else if (action === "review") {
+        await updateDoc(doc(db, "verifications", id), { fraudAction: "review" });
+        toast.success("Marked for manual review");
+      } else if (action === "block") {
+        await updateDoc(doc(db, "verifications", id), { fraudAction: "blocked" });
+        if (workerId) {
+          await updateDoc(doc(db, "users", workerId), {
+            isBanned: true,
+            status: "banned",
+            accountStatus: "suspended"
+          });
+        }
+        toast.error("Source blocked and suspended");
+      }
+    } catch(err: any) {
+       toast.error("Action failed: " + err.message);
+    }
   };
 
   return (
@@ -63,14 +95,19 @@ const AdminFraud = () => {
           <div className="py-20 text-center animate-pulse text-muted-foreground font-black uppercase tracking-widest text-xs">
             Scanning Transaction Patterns...
           </div>
-        ) : alerts.map((alert, i) => (
-          <div key={alert.id} className="group rounded-[2.5rem] bg-card border border-border p-8 hover:border-red-500/20 transition-all shadow-2xl overflow-hidden relative">
+        ) : alerts.filter(alert => alert.fraudAction !== "ignored").map((alert, i) => (
+          <div key={alert.id} className={`group rounded-[2.5rem] bg-card border ${alert.fraudAction === 'review' ? 'border-blue-500/50' : alert.fraudAction === 'blocked' ? 'border-red-500/50 opacity-50' : 'border-border'} p-8 hover:border-red-500/20 transition-all shadow-2xl overflow-hidden relative`}>
+            {alert.fraudAction && (
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
+            )}
             <div className="absolute top-0 right-0 p-8 flex gap-3">
                <div className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border ${
+                 alert.fraudAction === 'review' ? 'bg-blue-500 text-white border-blue-500' :
+                 alert.fraudAction === 'blocked' ? 'bg-red-800 text-white border-red-800' :
                  (alert.muktiScore || 100) < 40 ? 'bg-red-500 text-white border-red-500' : 
                  (alert.muktiScore || 100) < 70 ? 'bg-orange-500 text-white border-orange-500' : 'bg-yellow-500 text-white border-yellow-500'
                }`}>
-                 {(alert.muktiScore || 100) < 40 ? 'CRITICAL' : (alert.muktiScore || 100) < 70 ? 'SUSPICIOUS' : 'MONITOR'}
+                 {alert.fraudAction === 'review' ? 'UNDER REVIEW' : alert.fraudAction === 'blocked' ? 'BLOCKED' : (alert.muktiScore || 100) < 40 ? 'CRITICAL' : (alert.muktiScore || 100) < 70 ? 'SUSPICIOUS' : 'MONITOR'}
                </div>
             </div>
 
@@ -118,19 +155,28 @@ const AdminFraud = () => {
                   </div>
                </div>
 
-               <div className="w-full lg:w-72 space-y-3 pt-4 lg:pt-0">
+                <div className="w-full lg:w-72 space-y-3 pt-4 lg:pt-0">
                   <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-4">Tactical Response</div>
-                  <button onClick={() => handleAction(alert.id, "review")} className="w-full h-12 rounded-xl bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95">
-                    Mark Under Review
-                  </button>
+                  {alert.fraudAction !== 'review' && alert.fraudAction !== 'blocked' && (
+                    <button onClick={() => handleAction(alert.id, "review", alert.workerId)} className="w-full h-12 rounded-xl bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95">
+                      Mark Under Review
+                    </button>
+                  )}
+                  {alert.fraudAction !== 'blocked' && (
                   <div className="grid grid-cols-2 gap-3">
-                     <button onClick={() => handleAction(alert.id, "block")} className="h-12 rounded-xl border border-red-500/30 text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all active:scale-95">
+                     <button onClick={() => handleAction(alert.id, "block", alert.workerId)} className="h-12 rounded-xl border border-red-500/30 text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all active:scale-95">
                        Block Source
                      </button>
-                     <button onClick={() => handleAction(alert.id, "ignore")} className="h-12 rounded-xl border border-border text-muted-foreground font-black text-[10px] uppercase tracking-widest hover:bg-secondary transition-all active:scale-95">
+                     <button onClick={() => handleAction(alert.id, "ignore", alert.workerId)} className="h-12 rounded-xl border border-border text-muted-foreground font-black text-[10px] uppercase tracking-widest hover:bg-secondary transition-all active:scale-95">
                        Ignore Alert
                      </button>
                   </div>
+                  )}
+                  {alert.fraudAction === 'blocked' && (
+                    <div className="w-full h-12 flex items-center justify-center rounded-xl bg-red-500/10 text-red-500 border border-red-500/20 font-black text-[10px] uppercase tracking-widest">
+                      SYSTEM BLOCKED
+                    </div>
+                  )}
                </div>
             </div>
           </div>
