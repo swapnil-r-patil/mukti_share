@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 24.6 95% 53.1%; /* Premium Orange */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 24.6 95% 53.1%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 24.6 95% 53.1%;
+
+    --radius: 1.25rem;
+
+    --success: 142.1 76.2% 36.3%;
+    --success-foreground: 355.7 100% 97.3%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 48 96% 89%;
+  }
+
+  .dark {
+    --background: 224 71% 4%; /* Near Black Deep Slate */
+    --foreground: 210 40% 98%;
+
+    --card: 224 71% 4%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 24.6 95% 53.1%; /* Electric Orange */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 24.6 95% 53.1%;
+    
+    --success: 142.1 70.6% 45.3%;
+    --success-foreground: 144.9 80.4% 10%;
+    --warning: 47.9 95.8% 53.1%;
+    --warning-foreground: 26 83.3% 14.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    /* Soft mesh gradient background pattern for light mode */
+    background-image: radial-gradient(at 0% 0%, hsla(217, 91%, 60%, 0.1) 0px, transparent 50%),
+                      radial-gradient(at 100% 0%, hsla(280, 80%, 60%, 0.05) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  .dark body {
+    /* Deeper galaxy gradient for dark mode */
+    background-image: radial-gradient(at 0% 0%, hsla(217, 91%, 60%, 0.15) 0px, transparent 50%),
+                      radial-gradient(at 100% 0%, hsla(280, 80%, 60%, 0.1) 0px, transparent 50%);
+  }
+
+  h1, h2, h3, h4 {
+    @apply tracking-tight;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer utilities {
+  .card-shadow {
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 0 3px rgba(0,0,0,0.02);
+  }
+  .dark .card-shadow {
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .card-shadow-hover {
+    box-shadow: 0 8px 30px -4px rgba(0, 100, 255, 0.15), 0 0 5px rgba(0,100,255,0.05);
+    transform: translateY(-2px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .dark .card-shadow-hover {
+    box-shadow: 0 8px 30px -4px rgba(0, 150, 255, 0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  
+  /* Glassmorphism helpers */
+  .glass {
+    @apply bg-background/70 backdrop-blur-lg border border-white/10 shadow-lg;
+  }
+  .dark .glass {
+    @apply bg-card/60 border-white/5;
+  }
+  
+  /* Smooth scale click effect */
+  .btn-scale {
+    @apply transition-transform active:scale-95 duration-200;
+  }
+}
+
+@media print {
+  .print-hidden,
+  [role="status"],
+  nav,
+  header,
+  footer:not(.print-footer) {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    background-image: none !important;
+  }
+}
+
+/* ===== RESPONSIVE LAYOUT SYSTEM ===== */
+
+/* Ensure nothing overflows the viewport */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Container responsiveness */
+.container {
+  width: 100%;
+  max-width: 100%;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+/* Smooth scrolling for custom scrollbar areas */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(249,115,22,0.3) transparent;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(249,115,22,0.3); border-radius: 4px; }
+
+/* Mobile-first responsive adjustments */
+@media (max-width: 640px) {
+  /* Reduce border radius on mobile for better fit */
+  [class*="rounded-[2.5rem]"] {
+    border-radius: 1.25rem !important;
+  }
+  [class*="rounded-[3rem]"] {
+    border-radius: 1.5rem !important;
+  }
+  [class*="rounded-[3.5rem]"] {
+    border-radius: 1.5rem !important;
+  }
+
+  /* Tighter padding on mobile */
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Ensure modals are properly bounded */
+  .fixed.inset-0 > div {
+    max-height: 90vh;
+    max-width: 95vw;
+    overflow-y: auto;
+  }
+}
+
+/* Laptop screens (1024px-1440px) — prevent overflow */
+@media (min-width: 1024px) and (max-width: 1440px) {
+  .container {
+    max-width: 100%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Large desktop (1440px+) */
+@media (min-width: 1441px) {
+  .container {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
