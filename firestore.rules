@@ -36,11 +36,11 @@ service cloud.firestore {
 
     // 5. Public Credit Report Snapshots (QR Code Verification)
     // - ANYONE can read a snapshot (needed for external QR scans)
-    // - Only logged-in workers/system can create a snapshot
+    // - ANYONE generating a PDF can save the snapshot (useful for Demo Workers)
     // - NEVER allowed to update or delete snapshots publicly
     match /public_reports/{reportId} {
       allow read: if true;
-      allow create: if request.auth != null;
+      allow create: if true;
       allow update, delete: if false; 
     }
   }
