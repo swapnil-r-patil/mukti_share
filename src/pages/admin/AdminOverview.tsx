@@ -28,6 +28,7 @@ import { db } from "@/lib/firebase";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 
 const API_BASE_URL = "http://localhost:5000";
 
@@ -280,22 +281,25 @@ const AdminOverview = () => {
         <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Real-time registry monitoring & deep analytics active</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-6">
         {statCards.map((card, i) => (
-          <div key={i} className="group relative overflow-hidden rounded-[2.5rem] bg-slate-900 border border-white/5 p-6 hover:border-white/10 transition-all cursor-pointer shadow-2xl">
+          <div key={i} className={cn(
+            "group relative overflow-hidden rounded-[1.5rem] sm:rounded-[2.5rem] bg-card border border-border p-4 sm:p-6 hover:border-border/80 transition-all cursor-pointer shadow-2xl",
+            i === statCards.length - 1 && "col-span-2 lg:col-span-1"
+          )}>
             <div className={`absolute -right-4 -top-4 h-24 w-24 rounded-full bg-gradient-to-br ${card.color} opacity-10 blur-2xl group-hover:opacity-20 transition-opacity`} />
-            <div className="flex justify-between items-start mb-4">
-              <div className={`p-3 rounded-2xl bg-gradient-to-br ${card.color} text-white shadow-lg`}>
-                {card.icon}
+            <div className="flex justify-between items-start mb-3 sm:mb-4">
+              <div className={`p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-gradient-to-br ${card.color} text-white shadow-lg`}>
+                {React.cloneElement(card.icon as React.ReactElement, { size: window.innerWidth < 640 ? 18 : 24 })}
               </div>
-              <div className={`flex items-center gap-1 text-[10px] font-black ${card.isUp ? 'text-emerald-500' : 'text-red-500'} bg-white/5 px-2 py-1 rounded-lg`}>
-                {card.isUp ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+              <div className={`flex items-center gap-0.5 sm:gap-1 text-[8px] sm:text-[10px] font-black ${card.isUp ? 'text-emerald-500' : 'text-red-500'} bg-secondary/50 px-1.5 py-0.5 rounded-lg`}>
+                {card.isUp ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
                 {card.trend}
               </div>
             </div>
-            <div className="space-y-1">
-              <div className="text-3xl font-black text-white tracking-tighter">{card.value}</div>
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{card.label}</div>
+            <div className="space-y-0.5 sm:space-y-1">
+              <div className="text-xl sm:text-3xl font-black text-foreground tracking-tighter">{card.value}</div>
+              <div className="text-[8px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">{card.label}</div>
             </div>
           </div>
         ))}

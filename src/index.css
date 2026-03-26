@@ -6,14 +6,14 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    --background: 210 33% 99%; /* Very subtle off-white */
+    --foreground: 224 71% 4%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 224 71% 4%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 224 71% 4%;
 
     --primary: 24.6 95% 53.1%; /* Premium Orange */
     --primary-foreground: 0 0% 100%;
@@ -24,8 +24,8 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 24.6 95% 53.1%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -84,11 +84,11 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased transition-colors duration-500;
     font-family: 'Plus Jakarta Sans', sans-serif;
     /* Soft mesh gradient background pattern for light mode */
-    background-image: radial-gradient(at 0% 0%, hsla(217, 91%, 60%, 0.1) 0px, transparent 50%),
-                      radial-gradient(at 100% 0%, hsla(280, 80%, 60%, 0.05) 0px, transparent 50%);
+    background-image: radial-gradient(at 0% 0%, hsla(217, 91%, 60%, 0.05) 0px, transparent 50%),
+                      radial-gradient(at 100% 0%, hsla(280, 80%, 60%, 0.03) 0px, transparent 50%);
     background-attachment: fixed;
   }
 
@@ -116,7 +116,7 @@
     box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
   }
   .card-shadow-hover {
-    box-shadow: 0 8px 30px -4px rgba(0, 100, 255, 0.15), 0 0 5px rgba(0,100,255,0.05);
+    box-shadow: 0 8px 30px -4px rgba(0, 100, 255, 0.08), 0 0 5px rgba(0,100,255,0.03);
     transform: translateY(-2px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -126,10 +126,7 @@
   
   /* Glassmorphism helpers */
   .glass {
-    @apply bg-background/70 backdrop-blur-lg border border-white/10 shadow-lg;
-  }
-  .dark .glass {
-    @apply bg-card/60 border-white/5;
+    @apply bg-white/70 dark:bg-card/60 backdrop-blur-lg border border-slate-200 dark:border-white/5 shadow-lg;
   }
   
   /* Smooth scale click effect */

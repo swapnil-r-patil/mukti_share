@@ -27,3 +27,6 @@ temp_*
 purge_*
 debug_*
 *.local
+
+# Secrets
+/backend/secrets

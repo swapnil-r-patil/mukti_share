@@ -193,7 +193,7 @@ const LoginPage = () => {
                       setLoginError("");
                     }}
                     placeholder="Phone number"
-                    className={`w-full rounded-xl border ${loginError ? 'border-destructive' : 'border-border/50'} bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background`}
+                    className={`w-full rounded-xl border ${loginError ? 'border-destructive' : 'border-border'} bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background`}
                     autoFocus
                     required
                   />
@@ -213,7 +213,7 @@ const LoginPage = () => {
                       setLoginError("");
                     }}
                     placeholder="Password"
-                    className={`w-full rounded-xl border ${loginError ? 'border-destructive' : 'border-border/50'} bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background`}
+                    className={`w-full rounded-xl border ${loginError ? 'border-destructive' : 'border-border'} bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background`}
                     required
                   />
                   <button
@@ -242,7 +242,7 @@ const LoginPage = () => {
                 <button
                   type="button"
                   onClick={handleGoogleSignIn}
-                  className="flex w-full items-center justify-center gap-3 rounded-xl border border-border/50 bg-background/50 py-3 text-sm font-bold text-foreground transition-all hover:bg-background active:scale-95"
+                  className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-background/50 py-3 text-sm font-bold text-foreground transition-all hover:bg-background active:scale-95"
                 >
                   <svg className="h-4 w-4" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -253,10 +253,10 @@ const LoginPage = () => {
                   Google
                 </button>
 
-                {/* Demo Logins */}
+                {/* One-Click Demo Access buttons are responsive (grid on mobile, flex on desktop) */}
                 <div className="mt-8 space-y-3 relative z-50">
-                  <p className="text-[10px] font-bold text-center text-muted-foreground uppercase tracking-[0.2em]">One-Click Demo Access</p>
-                  <div className="flex gap-3">
+                  <p className="text-[10px] font-black text-center text-muted-foreground uppercase tracking-[0.2em] mb-2 opacity-60">One-Click Demo Access</p>
+                  <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-3">
                     <button
                       type="button"
                       onClick={async (e) => { 
@@ -264,9 +264,9 @@ const LoginPage = () => {
                         console.log("Worker Demo Clicked");
                         await login("1234567891", "123456");
                       }}
-                      className="flex-1 py-3 px-2 text-[11px] font-bold rounded-xl border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-all active:scale-95 shadow-sm cursor-pointer"
+                      className="flex-1 py-3 px-2 text-[10px] sm:text-[11px] font-black rounded-xl border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-all active:scale-95 shadow-sm cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis"
                     >
-                      Worker Demo
+                      Worker
                     </button>
                     <button
                       type="button"
@@ -274,9 +274,9 @@ const LoginPage = () => {
                         e.preventDefault(); e.stopPropagation();
                         await login("1234567890", "123456");
                       }}
-                      className="flex-1 py-3 px-2 text-[11px] font-bold rounded-xl border border-accent/30 bg-accent/10 text-accent hover:bg-accent/20 transition-all active:scale-95 shadow-sm cursor-pointer"
+                      className="flex-1 py-3 px-2 text-[10px] sm:text-[11px] font-black rounded-xl border border-accent/30 bg-accent/10 text-accent hover:bg-accent/20 transition-all active:scale-95 shadow-sm cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis"
                     >
-                      Customer Demo
+                      Customer
                     </button>
                     <button
                       type="button"
@@ -284,9 +284,9 @@ const LoginPage = () => {
                         e.preventDefault(); e.stopPropagation();
                         await login("1234567892", "123456");
                       }}
-                      className="flex-1 py-3 px-2 text-[11px] font-bold rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 transition-all active:scale-95 shadow-sm cursor-pointer"
+                      className="col-span-2 sm:flex-1 py-3 px-2 text-[10px] sm:text-[11px] font-black rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 transition-all active:scale-95 shadow-sm cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis"
                     >
-                      Admin Demo
+                      Admin
                     </button>
                   </div>
                 </div>
@@ -349,7 +349,7 @@ const LoginPage = () => {
                   <button
                     type="button"
                     onClick={handleGoogleSignIn}
-                    className="flex w-full items-center justify-center gap-3 rounded-xl border border-border/50 bg-background/50 py-3.5 text-sm font-bold text-foreground transition-all hover:bg-background active:scale-95"
+                    className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-background/50 py-3.5 text-sm font-bold text-foreground transition-all hover:bg-background active:scale-95"
                   >
                     <svg className="h-4 w-4" viewBox="0 0 24 24">
                       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -375,7 +375,7 @@ const LoginPage = () => {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                         placeholder="Phone number"
-                        className="w-full rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
+                        className="w-full rounded-xl border border-border bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
                         autoFocus
                         required
                       />
@@ -390,7 +390,7 @@ const LoginPage = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Create Password"
-                        className="w-full rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
+                        className="w-full rounded-xl border border-border bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
                         required
                       />
                       <button
@@ -436,7 +436,7 @@ const LoginPage = () => {
                               (e.target.nextElementSibling as HTMLInputElement).focus();
                             }
                           }}
-                          className="h-12 w-12 rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm text-center text-xl font-bold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
+                          className="h-12 w-12 rounded-xl border border-border bg-background/50 backdrop-blur-sm text-center text-xl font-bold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
                           autoFocus={i === 0}
                           required
                         />
@@ -486,14 +486,14 @@ const LoginPage = () => {
                     <input
                       type="text" value={name} onChange={(e) => setName(e.target.value)}
                       placeholder="Your Full Name"
-                      className="w-full rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
+                      className="w-full rounded-xl border border-border bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
                       autoFocus required
                     />
 
                     <input
                       type="text" value={skill}
                       placeholder="Skill (e.g. Plumber)"
-                      className="w-full rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
+                      className="w-full rounded-xl border border-border bg-background/50 backdrop-blur-sm px-4 py-3.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
                       required
                       onChange={(e) => {
                         const val = e.target.value;
@@ -508,7 +508,7 @@ const LoginPage = () => {
                       <input
                         type="text" value={location} onChange={(e) => setLocation(e.target.value)}
                         placeholder="Location (Auto-detecting...)"
-                        className="w-full rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm px-4 py-3.5 pr-12 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
+                        className="w-full rounded-xl border border-border bg-background/50 backdrop-blur-sm px-4 py-3.5 pr-12 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
                         required
                       />
                       <button

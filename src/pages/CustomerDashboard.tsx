@@ -119,7 +119,7 @@ const CustomerDashboard = () => {
 
       {/* Header Area */}
       <div className="mb-10 opacity-0 animate-fade-up relative z-10" style={{ animationDelay: "0ms" }}>
-        <h2 className="text-3xl sm:text-4xl font-black italic tracking-tighter text-white uppercase italic leading-tight">
+        <h2 className="text-3xl sm:text-4xl font-black italic tracking-tighter text-foreground uppercase italic leading-tight">
           Welcome Back, {user.name.split(" ")[0]} 
         </h2>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 mt-2 pl-1 italic">
@@ -138,7 +138,7 @@ const CustomerDashboard = () => {
                 setIsUpdatingLocation(false);
               }}
               disabled={isUpdatingLocation}
-              className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-500 hover:text-white transition-all disabled:opacity-50"
+              className="p-1.5 rounded-lg bg-white/5 border border-border text-slate-500 hover:text-foreground transition-all disabled:opacity-50"
             >
                <RefreshCw size={10} className={isUpdatingLocation ? "animate-spin" : ""} />
             </button>
@@ -152,7 +152,7 @@ const CustomerDashboard = () => {
         <div className="flex flex-col gap-6 lg:col-span-4 relative z-10">
           
           {/* Section 1: Identity & Classification */}
-          <div className="rounded-[2.5rem] bg-slate-950 p-6 sm:p-8 border border-white/5 shadow-2xl relative overflow-hidden group">
+          <div className="rounded-[2.5rem] bg-card p-6 sm:p-8 border border-border shadow-2xl relative overflow-hidden group">
              <div className="absolute -top-24 -right-24 h-48 w-48 bg-orange-500/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
              
              <div className="relative z-10 text-center">
@@ -162,7 +162,7 @@ const CustomerDashboard = () => {
                    </div>
                 </div>
                 
-                <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase">{user.name}</h3>
+                <h3 className="text-2xl font-black text-foreground italic tracking-tighter uppercase">{user.name}</h3>
                 <div className="flex flex-col items-center gap-3 mt-4">
                    <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] px-5 py-2 rounded-full border ${badgeColor} italic`}>
                       <ShieldCheck size={14} strokeWidth={3} /> {trustLevel}
@@ -178,7 +178,7 @@ const CustomerDashboard = () => {
                       <span>Trust Integrity</span>
                       <span className="text-orange-500">{trustScore}%</span>
                    </div>
-                   <div className="h-3 w-full bg-slate-900 rounded-full overflow-hidden border border-white/5 p-0.5 shadow-inner">
+                   <div className="h-3 w-full bg-slate-900 rounded-full overflow-hidden border border-border p-0.5 shadow-inner">
                       <div 
                          className="h-full bg-gradient-to-r from-orange-600 to-orange-400 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(249,115,22,0.5)]"
                          style={{ width: `${trustScore}%` }}
@@ -189,19 +189,19 @@ const CustomerDashboard = () => {
           </div>
 
           {/* Section 2: Contribution Metrics */}
-          <div className="rounded-[2rem] bg-slate-950 p-6 border border-white/5 shadow-inner grid grid-cols-2 gap-4">
-             <div className="text-center p-4 rounded-2xl bg-white/5 border border-white/5">
+          <div className="rounded-[2rem] bg-card p-4 sm:p-6 border border-border shadow-inner grid grid-cols-2 gap-3 sm:gap-4">
+             <div className="text-center p-4 rounded-2xl bg-white/5 border border-border">
                 <div className="text-2xl font-black text-orange-500 italic tracking-tighter">{verifications.length}</div>
                 <div className="text-[8px] font-black text-slate-600 uppercase tracking-[0.2em] mt-1">Verified Jobs</div>
              </div>
-             <div className="text-center p-4 rounded-2xl bg-white/5 border border-white/5">
-                <div className="text-2xl font-black text-white italic tracking-tighter">{user.points || 0}</div>
+             <div className="text-center p-4 rounded-2xl bg-white/5 border border-border">
+                <div className="text-2xl font-black text-foreground italic tracking-tighter">{user.points || 0}</div>
                 <div className="text-[8px] font-black text-slate-600 uppercase tracking-[0.2em] mt-1">Credits Earned</div>
              </div>
           </div>
 
           {/* Section 3: Alerts & Warnings */}
-          <div className="rounded-[2rem] bg-slate-950 p-6 border border-white/5 font-black italic">
+          <div className="rounded-[2rem] bg-card p-6 border border-border font-black italic">
              <div className="text-[9px] font-black uppercase text-slate-600 tracking-[0.3em] mb-4 flex items-center gap-3">
                 <ShieldAlert size={16} className="text-orange-500" /> Security Intelligence
              </div>
@@ -214,7 +214,7 @@ const CustomerDashboard = () => {
                     <Info size={12} /> Long-term pattern established
                   </div>
                 )}
-                <div className="text-[8px] font-black text-slate-600 flex items-center gap-3 bg-white/5 px-4 py-3 rounded-xl border border-white/5 uppercase tracking-widest leading-relaxed">
+                <div className="text-[8px] font-black text-slate-600 flex items-center gap-3 bg-white/5 px-4 py-3 rounded-xl border border-border uppercase tracking-widest leading-relaxed">
                    <Clock size={12} /> Registry Rule: 7-day cooldown on same worker
                 </div>
              </div>
@@ -225,28 +225,28 @@ const CustomerDashboard = () => {
         <div className="flex flex-col gap-6 md:col-span-8 lg:col-span-8 relative z-10">
           
           {/* Quick Actions Bar */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-             <button onClick={() => navigate("/verify")} className="group flex items-center justify-between p-6 rounded-[2rem] bg-gradient-to-r from-orange-600 to-orange-400 text-white shadow-2xl hover:scale-[1.02] transition-all active:scale-[0.98]">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+             <button onClick={() => navigate("/verify")} className="group flex items-center justify-between p-6 rounded-[2rem] bg-gradient-to-r from-orange-600 to-orange-400 text-foreground shadow-2xl hover:scale-[1.02] transition-all active:scale-[0.98]">
                 <div className="flex items-center gap-4">
-                   <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-md">
-                      <PlusCircle size={28} />
+                   <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md">
+                      <PlusCircle size={window.innerWidth < 640 ? 20 : 28} />
                    </div>
                    <div className="text-left font-black italic">
-                      <div className="text-xl tracking-tighter uppercase whitespace-nowrap">Verify Worker</div>
-                      <div className="text-[8px] opacity-70 uppercase tracking-widest italic whitespace-nowrap">Scan Handshake Token</div>
+                      <div className="text-xs sm:text-xl tracking-tighter uppercase whitespace-nowrap">Verify</div>
+                      <div className="text-[6px] sm:text-[8px] opacity-70 uppercase tracking-widest italic whitespace-nowrap">Scan Token</div>
                    </div>
                 </div>
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
              </button>
 
-             <button onClick={() => navigate("/verify/request")} className="group flex items-center justify-between p-6 rounded-[2rem] bg-slate-950 border border-orange-500/20 text-white shadow-xl hover:border-orange-500/50 transition-all active:scale-[0.98]">
+             <button onClick={() => navigate("/verify/request")} className="group flex items-center justify-between p-6 rounded-[2rem] bg-card border border-orange-500/20 text-foreground shadow-xl hover:border-orange-500/50 transition-all active:scale-[0.98]">
                 <div className="flex items-center gap-4">
-                   <div className="p-3 rounded-2xl bg-orange-500/10 text-orange-500">
-                      <Search size={28} />
+                   <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-orange-500/10 text-orange-500">
+                      <Search size={window.innerWidth < 640 ? 20 : 28} />
                    </div>
                    <div className="text-left font-black italic">
-                      <div className="text-xl tracking-tighter uppercase whitespace-nowrap">Find Specialist</div>
-                      <div className="text-[8px] text-slate-500 uppercase tracking-widest italic whitespace-nowrap">Broadcast Skill Signal</div>
+                      <div className="text-xs sm:text-xl tracking-tighter uppercase whitespace-nowrap">Find</div>
+                      <div className="text-[6px] sm:text-[8px] text-slate-500 uppercase tracking-widest italic whitespace-nowrap">Skill Signal</div>
                    </div>
                 </div>
                 <ArrowRight size={20} className="text-slate-700 group-hover:translate-x-1 transition-transform" />
@@ -254,7 +254,7 @@ const CustomerDashboard = () => {
           </div>
 
           {/* NLP Insights Card */}
-          <div className="rounded-[2.5rem] bg-slate-950 p-8 border border-white/5 shadow-2xl font-black italic">
+          <div className="rounded-[2.5rem] bg-card p-8 border border-border shadow-2xl font-black italic">
              <div className="flex items-center justify-between mb-8">
                 <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-500 flex items-center gap-3 italic">
                    <MessageSquare size={16} /> 01. Cognitive Insights (NLP)
@@ -300,16 +300,16 @@ const CustomerDashboard = () => {
                    <div className="p-3 rounded-2xl bg-orange-500 text-white shadow-xl shadow-orange-500/20">
                       <Award size={24} />
                    </div>
-                   <h4 className="text-xl font-black italic tracking-tighter text-white uppercase italic">Registry Contribution</h4>
+                   <h4 className="text-xl font-black italic tracking-tighter text-foreground uppercase italic">Registry Contribution</h4>
                 </div>
                 <p className="text-sm font-bold text-slate-400 mb-6 max-w-lg leading-relaxed uppercase tracking-tight italic">
                    "Your verified handshakes empower informal workers to access official credit facilities and government benefits. You've verified <span className="text-orange-500 font-black">{verifications.length} units</span> so far."
                 </p>
                 <div className="flex gap-4">
-                   <div className="px-5 py-3 rounded-2xl bg-white/5 border border-white/5 text-[9px] font-black text-white hover:bg-white/10 transition-all cursor-help uppercase tracking-widest">
+                   <div className="px-5 py-3 rounded-2xl bg-white/5 border border-border text-[9px] font-black text-foreground hover:bg-white/10 transition-all cursor-help uppercase tracking-widest">
                       Credit Enablement: Active
                    </div>
-                   <div className="px-5 py-3 rounded-2xl bg-white/5 border border-white/5 text-[9px] font-black text-white hover:bg-white/10 transition-all cursor-help uppercase tracking-widest">
+                   <div className="px-5 py-3 rounded-2xl bg-white/5 border border-border text-[9px] font-black text-foreground hover:bg-white/10 transition-all cursor-help uppercase tracking-widest">
                       Benefit Eligibility: Tier 1
                    </div>
                 </div>
@@ -317,23 +317,23 @@ const CustomerDashboard = () => {
           </div>
 
           {/* Historical Log */}
-          <div className="rounded-[2.5rem] bg-slate-950 p-8 border border-white/5">
+          <div className="rounded-[2.5rem] bg-card p-8 border border-border">
              <div className="flex items-center justify-between mb-8">
                 <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 flex items-center gap-3 italic">
                    <History size={16} /> 02. Historical Telemetry
                 </h4>
-                <button onClick={() => navigate("/activity")} className="text-[8px] font-black text-orange-500 uppercase tracking-[0.4em] hover:text-white transition-all underline underline-offset-4">Expand All</button>
+                <button onClick={() => navigate("/activity")} className="text-[8px] font-black text-orange-500 uppercase tracking-[0.4em] hover:text-foreground transition-all underline underline-offset-4">Expand All</button>
              </div>
              
              <div className="space-y-4">
                 {verifications.length > 0 ? verifications.slice(0, 3).map((v) => (
-                  <div key={v.id} className="flex items-center justify-between p-6 rounded-[2rem] bg-white/5 border border-white/5 group hover:border-orange-500/20 transition-all font-black italic">
+                  <div key={v.id} className="flex items-center justify-between p-6 rounded-[2rem] bg-white/5 border border-border group hover:border-orange-500/20 transition-all font-black italic">
                      <div className="flex items-center gap-6">
-                        <div className="h-14 w-14 rounded-2xl bg-slate-900 border border-white/5 flex items-center justify-center text-xl text-orange-400">
+                        <div className="h-14 w-14 rounded-2xl bg-slate-900 border border-border flex items-center justify-center text-xl text-orange-400">
                            {v.workerName?.charAt(0) || "W"}
                         </div>
                         <div className="text-left">
-                           <div className="text-lg text-white tracking-tighter uppercase">{v.workerName || "Worker"}</div>
+                           <div className="text-lg text-foreground tracking-tighter uppercase">{v.workerName || "Worker"}</div>
                            <div className="text-[9px] text-slate-600 uppercase tracking-widest mt-1">
                               {v.service} • {v.timestamp instanceof Date ? v.timestamp.toLocaleDateString() : "Just now"}
                            </div>
@@ -349,7 +349,7 @@ const CustomerDashboard = () => {
                      </div>
                   </div>
                 )) : (
-                  <div className="py-20 text-center border border-dashed border-white/5 rounded-[2rem]">
+                  <div className="py-20 text-center border border-dashed border-border rounded-[2rem]">
                      <History size={40} className="mx-auto text-slate-800 mb-4 opacity-50" />
                      <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest">Historical Registry Pending</p>
                   </div>

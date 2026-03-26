@@ -18,6 +18,7 @@ export interface MonthlyData {
   month: string;
   jobs: number;
   rating: number;
+  earnings: number;
 }
 
 export const DEMO_VERIFICATIONS: Verification[] = [
@@ -115,12 +116,12 @@ export const DEMO_VERIFICATIONS: Verification[] = [
 ];
 
 export const MONTHLY_DATA: MonthlyData[] = [
-  { month: "Oct", jobs: 3, rating: 4.2 },
-  { month: "Nov", jobs: 5, rating: 4.5 },
-  { month: "Dec", jobs: 4, rating: 4.3 },
-  { month: "Jan", jobs: 2, rating: 4.5 },
-  { month: "Feb", jobs: 2, rating: 3.5 },
-  { month: "Mar", jobs: 3, rating: 4.7 },
+  { month: "Oct", jobs: 3, rating: 4.2, earnings: 12000 },
+  { month: "Nov", jobs: 5, rating: 4.5, earnings: 18000 },
+  { month: "Dec", jobs: 4, rating: 4.3, earnings: 15500 },
+  { month: "Jan", jobs: 2, rating: 4.5, earnings: 11000 },
+  { month: "Feb", jobs: 2, rating: 3.5, earnings: 9500 },
+  { month: "Mar", jobs: 3, rating: 4.7, earnings: 12500 },
 ];
 
 export const getAverageRating = (verifications: Verification[]) => {
@@ -152,7 +153,9 @@ export const DEMO_DASHBOARD_DATA = {
   financial: {
     incomeRange: { min: 4500, max: 8500 },
     perJobIncome: 650,
-    totalEarnings: 12500
+    totalEarnings: 12500,
+    safeEMI: 2400,
+    loanRange: { min: 25000, max: 45000 }
   },
   confidence: "HIGH",
   loan: {

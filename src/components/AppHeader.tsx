@@ -83,7 +83,7 @@ const AppHeader = () => {
   }, [user?.id, user?.role]);
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 print:hidden">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border print:hidden">
       <div className="relative container mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
         
         {/* Left: Logo */}
@@ -96,7 +96,7 @@ const AppHeader = () => {
             <span className="text-xl font-black italic">M</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-black italic leading-none text-white tracking-tighter uppercase">Mukti</span>
+            <span className="text-sm font-black italic leading-none text-foreground tracking-tighter uppercase">Mukti</span>
             <span className="text-[9px] font-black uppercase tracking-[0.3em] text-orange-500 leading-none mt-1 pl-0.5">Portal</span>
           </div>
           {!isOnline && (
@@ -109,7 +109,7 @@ const AppHeader = () => {
         
         {/* Center: Desktop Navigation */}
         {user && (
-          <nav className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-2xl border border-white/5 bg-black/40 p-1.5 backdrop-blur-2xl">
+          <nav className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-2xl border border-border bg-card/40 p-1.5 backdrop-blur-2xl">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path || (item.path === "/verify" && location.pathname.startsWith("/verify") && !location.pathname.includes("request"));
               return (
@@ -133,10 +133,10 @@ const AppHeader = () => {
           {user && (
             <div className="hidden items-center gap-3 sm:flex">
               <div className="flex flex-col text-right">
-                <span className="text-xs font-black text-white italic tracking-tight">{user.name}</span>
+                <span className="text-xs font-black text-foreground italic tracking-tight">{user.name}</span>
                 <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mt-0.5">{user.role}</span>
               </div>
-              <div className="h-9 w-9 overflow-hidden rounded-xl border border-orange-500/30 bg-slate-900 shadow-lg shadow-orange-500/10">
+              <div className="h-9 w-9 overflow-hidden rounded-xl border border-orange-500/30 bg-secondary shadow-lg shadow-orange-500/10">
                 {user.photo ? (
                   <img src={user.photo} alt={user.name} className="h-full w-full object-cover" />
                 ) : (
@@ -151,14 +151,14 @@ const AppHeader = () => {
           
           <button
             onClick={() => setLanguage(language === "en" ? "hi" : language === "hi" ? "mr" : "en")}
-            className="h-9 min-w-[3rem] px-2 rounded-xl bg-white/5 border border-white/10 text-white transition-all hover:bg-white/10 text-[10px] uppercase tracking-widest font-black"
+            className="h-9 min-w-[3rem] px-2 rounded-xl bg-secondary border border-border text-foreground transition-all hover:bg-secondary/80 text-[10px] uppercase tracking-widest font-black"
           >
             {language}
           </button>
           
           <button
             onClick={toggle}
-            className="h-9 w-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-slate-400 transition-all hover:text-white hover:bg-white/10 active:scale-95"
+            className="h-9 w-9 flex items-center justify-center rounded-xl bg-secondary border border-border text-slate-400 transition-all hover:text-foreground hover:bg-secondary/80 active:scale-95"
           >
             {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
@@ -171,14 +171,14 @@ const AppHeader = () => {
               >
                 <Bell size={18} />
                 {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-orange-500 border-2 border-slate-950 text-[8px] font-black text-white flex items-center justify-center">{notifications.length > 9 ? '9+' : notifications.length}</span>
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-orange-500 border-2 border-card text-[8px] font-black text-white flex items-center justify-center">{notifications.length > 9 ? '9+' : notifications.length}</span>
                 )}
               </button>
               
               {showNotifications && (
-                <div className="absolute right-0 mt-4 w-80 rounded-[2.5rem] bg-slate-950 border border-white/10 shadow-3xl p-6 animate-in fade-in slide-in-from-top-4 duration-300 z-[100] backdrop-blur-2xl">
+                <div className="absolute right-0 mt-4 w-80 rounded-[2.5rem] bg-card border border-border shadow-3xl p-6 animate-in fade-in slide-in-from-top-4 duration-300 z-[100] backdrop-blur-2xl">
                    <div className="flex items-center justify-between mb-6">
-                      <h4 className="font-black text-[10px] uppercase tracking-[0.4em] text-white italic">Notifications</h4>
+                      <h4 className="font-black text-[10px] uppercase tracking-[0.4em] text-foreground italic">Notifications</h4>
                       {notifications.length > 0 && (
                         <span className="text-[8px] font-black text-orange-500 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/10">{notifications.length.toString().padStart(2, '0')} NEW</span>
                       )}
@@ -190,15 +190,15 @@ const AppHeader = () => {
                              {n.type === 'verified' ? <ShieldCheck size={16} /> : n.type === 'rejected' ? <Bell size={16} /> : <PlusCircle size={16} />}
                            </div>
                            <div className="min-w-0">
-                              <div className="font-black text-sm text-white italic truncate uppercase tracking-tighter">{n.title}</div>
+                              <div className="font-black text-sm text-foreground italic truncate uppercase tracking-tighter">{n.title}</div>
                               <div className="text-[10px] font-bold text-slate-500 mt-1 uppercase leading-relaxed">{n.message}</div>
                               <div className="text-[8px] font-bold text-slate-700 mt-1 uppercase tracking-widest">{n.time}</div>
                            </div>
                         </div>
                       )) : (
-                        <div className="py-12 text-center bg-white/[0.02] rounded-3xl border border-dashed border-white/5">
-                           <Bell size={32} className="mx-auto text-slate-800 mb-4 opacity-30" />
-                           <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em] italic">No active notifications</p>
+                        <div className="py-12 text-center bg-secondary/20 rounded-3xl border border-dashed border-border text-foreground">
+                           <Bell size={32} className="mx-auto text-slate-400 mb-4 opacity-30" />
+                           <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] italic">No active notifications</p>
                         </div>
                       )}
                    </div>

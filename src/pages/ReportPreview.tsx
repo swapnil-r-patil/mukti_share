@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { DEMO_VERIFICATIONS, MONTHLY_DATA, getAverageRating, DEMO_DASHBOARD_DATA } from "@/data/demoData";
+import { DEMO_VERIFICATIONS, MONTHLY_DATA, getAverageRating, DEMO_DASHBOARD_DATA, type MonthlyData } from "@/data/demoData";
 import { calculateTrustScore } from "@/utils/trustEngine";
 import { 
   ArrowLeft, 
@@ -168,12 +168,12 @@ const ReportPreview = () => {
         history.push({
           month: months[mIdx],
           jobs: monthJobs.length,
-          rating: rating.toFixed(1),
+          rating: Number(rating),
           earnings: earnings,
           label: `${months[mIdx]} ${yr}`
         });
       }
-      return history;
+      return history as MonthlyData[];
     };
 
     if (isDemoWorker) {
@@ -487,8 +487,8 @@ const ReportPreview = () => {
             <div className="mb-6 flex items-center gap-2 text-sm font-black uppercase tracking-widest">
               <TrendingUp size={16} className="text-orange-600" /> {isRegularWorker ? "Consistent Business Record" : "Work History Statement"}
             </div>
-            <div className="overflow-hidden rounded-xl border border-slate-200">
-              <table className="w-full text-left text-sm">
+            <div className="overflow-x-auto rounded-xl border border-slate-200">
+              <table className="w-full min-w-[600px] sm:min-w-0 text-left text-sm">
                 <thead className="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b">
                   <tr>
                     <th className="px-6 py-4">Month/Year</th>
@@ -519,7 +519,7 @@ const ReportPreview = () => {
                     <td className="px-6 py-4">{user.workerType === 0 ? "Cumulative History" : "6-Month Summary"}</td>
                     <td className="px-6 py-4">{user.workerType === 0 ? "14 Months" : `${totalJobs} Jobs`}</td>
                     <td className="px-6 py-4 text-center">{user.workerType === 0 ? "5.0 Avg" : `${avgRating.toFixed(1)} Avg`}</td>
-                    <td className="px-6 py-4 text-right text-lg">₹{(user.workerType === 0 ? 72400 : monthlyStats.reduce((sum, m) => sum + m.earnings, 0)).toLocaleString("en-IN")}</td>
+                    <td className="px-6 py-4 text-right text-lg">₹{(user.workerType === 0 ? 72400 : (monthlyStats as MonthlyData[]).reduce((sum, m) => sum + m.earnings, 0)).toLocaleString("en-IN")}</td>
                   </tr>
                 </tfoot>
               </table>
@@ -527,7 +527,7 @@ const ReportPreview = () => {
           </div>
 
           {/* Professional Disclosure */}
-          <div className="px-10 pb-10 grid grid-cols-2 gap-10">
+          <div className="px-6 sm:px-10 pb-10 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10">
             <div className="space-y-4">
                <div className="flex items-center gap-2 text-sm font-black uppercase tracking-widest">
                 <AlertCircle size={16} className="text-orange-500" /> Annual Projection

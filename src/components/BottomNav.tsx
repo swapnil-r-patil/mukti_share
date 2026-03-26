@@ -28,7 +28,7 @@ const BottomNav = () => {
 
   return (
     <div className="fixed inset-x-0 bottom-6 z-50 px-6 md:hidden pb-safe print:hidden">
-      <nav className="mx-auto flex h-20 max-w-lg items-center justify-around rounded-[2.5rem] bg-slate-950/80 border border-white/10 px-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
+      <nav className="mx-auto flex h-20 max-w-lg items-center justify-around rounded-[2.5rem] bg-card/80 border border-border px-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] backdrop-blur-2xl">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path || (item.path === "/verify" && location.pathname.startsWith("/verify") && !location.pathname.includes("request"));
           return (

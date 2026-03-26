@@ -170,7 +170,7 @@ app.post('/api/worker/register', async (req, res) => {
 
 app.get('/api/admin/users', async (req, res) => {
   try {
-    let allUsers = [...getLocalUsers()];
+    const allUsers = [...getLocalUsers()];
 
     if (db) {
       const firebaseFetch = db.collection('users')
@@ -737,7 +737,7 @@ app.post('/api/work-request', async (req, res) => {
 // 2. Get All Work Requests (Worker dashboard feed)
 app.get('/api/work-requests', async (req, res) => {
   try {
-    let allRequests = [...getLocalWorkRequests()];
+    const allRequests = [...getLocalWorkRequests()];
 
     if (isFirebaseEnabled && db) {
       try {

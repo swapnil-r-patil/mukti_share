@@ -16,12 +16,16 @@ import {
   Wallet,
   ShieldCheck,
   BrainCircuit,
-  Bell
+  Bell,
+  Sun,
+  Moon
 } from "lucide-react";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/hooks/useTheme";
+import { cn } from "@/lib/utils";
 
 const API_BASE_URL = "http://localhost:5000";
 
@@ -32,6 +36,7 @@ interface AdminLayoutProps {
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+  const { isDark, toggle } = useTheme();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [pendingRequests, setPendingRequests] = useState(0);
@@ -46,7 +51,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
     let reqsCount = 0;
     let usersCount = 0;
-    let pendingUsersIds: string[] = [];
+    const pendingUsersIds: string[] = [];
 
     const unsubReqs = onSnapshot(qReqs, (snap) => {
       reqsCount = snap.size;
@@ -86,10 +91,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#020617] text-slate-200">
-      {/* Sidebar */}
+    <div className="flex min-h-screen bg-background text-foreground transition-colors duration-500">
+      {/* Sidebar - Responsive: Hidden on mobile (overlay when open), fixed on desktop */}
       <aside 
-        className={`${isSidebarOpen ? 'w-64' : 'w-20'} transition-all duration-300 border-r border-white/5 bg-slate-950/50 backdrop-blur-xl flex flex-col z-50`}
+        className={cn(
+          "fixed inset-y-0 left-0 z-[60] flex flex-col border-r border-border bg-card transition-all duration-300",
+          isSidebarOpen ? "w-64 translate-x-0" : "w-10 -translate-x-full lg:translate-x-0 lg:w-20"
+        )}
       >
         <div className="p-6 flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-orange-600 flex items-center justify-center shadow-lg shadow-orange-600/20">
@@ -108,7 +116,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all group ${
                 location.pathname === item.path 
                 ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20' 
-                : 'text-slate-500 hover:text-white hover:bg-white/5'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
               }`}
             >
               <span className={`${location.pathname === item.path ? 'text-white' : 'text-slate-500 group-hover:text-orange-500'}`}>
@@ -135,7 +143,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
           {/* Language Selector - Down One */}
           {isSidebarOpen && (
-            <div className="flex items-center gap-1.5 bg-white/5 p-1 rounded-xl border border-white/5">
+            <div className="flex items-center gap-1.5 bg-secondary p-1 rounded-xl border border-border">
               {(['en', 'hi', 'mr'] as const).map((lang) => (
                 <button
                   key={lang}
@@ -163,15 +171,31 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className={cn(
+        "flex-1 flex flex-col overflow-hidden transition-all duration-300",
+        isSidebarOpen ? "lg:ml-64" : "lg:ml-20"
+      )}>
+        {/* Overlay for mobile when sidebar is open */}
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 z-[55] bg-black/60 backdrop-blur-sm lg:hidden transition-opacity" 
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
         {/* Top Navbar */}
-        <header className="h-16 sm:h-20 border-b border-white/5 bg-slate-950/50 backdrop-blur-md flex items-center justify-between px-4 sm:px-8 z-40">
+        <header className="h-16 sm:h-20 border-b border-border bg-card/50 backdrop-blur-md flex items-center justify-between px-4 sm:px-8 z-40">
           <div className="flex items-center gap-6">
             <button 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-white"
+              className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-white lg:hidden"
             >
               {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+            <button 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-2 rounded-lg bg-secondary text-muted-foreground hover:text-foreground hidden lg:flex"
+            >
+              <Menu size={20} />
             </button>
             <div className="relative group hidden lg:block">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-orange-500 transition-colors" size={18} />
@@ -192,16 +216,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               >
                 <Bell size={20} className="group-hover:rotate-12 transition-transform" />
                 {pendingRequests > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-slate-950 animate-pulse">
+                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-card animate-pulse">
                     {pendingRequests}
                   </span>
                 )}
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 mt-4 w-80 rounded-[2.5rem] bg-slate-950 border border-white/10 shadow-3xl p-6 animate-in fade-in slide-in-from-top-4 duration-300 z-50 backdrop-blur-2xl">
+                <div className="absolute right-0 mt-4 w-80 rounded-[2.5rem] bg-card border border-border shadow-3xl p-6 animate-in fade-in slide-in-from-top-4 duration-300 z-50 backdrop-blur-2xl">
                   <div className="flex items-center justify-between mb-6">
-                    <h4 className="font-black text-[10px] uppercase tracking-[0.4em] text-white italic">Registry Protocol</h4>
+                    <h4 className="font-black text-[10px] uppercase tracking-[0.4em] text-foreground italic">Registry Protocol</h4>
                     <span className="text-[8px] font-black text-orange-500 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/10 uppercase">
                       {pendingRequests} Pending
                     </span>
@@ -213,22 +237,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                           setShowNotifications(false);
                           (window as any).location.href = "/admin/requests";
                         }}
-                        className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 transition-all hover:border-orange-500/20 group cursor-pointer"
+                        className="flex gap-4 p-4 rounded-2xl bg-secondary border border-border transition-all hover:border-orange-500/20 group cursor-pointer"
                       >
                         <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-500 h-fit group-hover:scale-110 transition-transform">
                           <ShieldCheck size={16} />
                         </div>
                         <div className="min-w-0">
-                          <div className="font-black text-sm text-white italic truncate uppercase tracking-tighter">Verification Needed</div>
+                          <div className="font-black text-sm text-foreground italic truncate uppercase tracking-tighter">Verification Needed</div>
                           <div className="text-[10px] font-bold text-slate-500 mt-1 uppercase leading-relaxed">
                             {pendingRequests} workers awaiting registry approval.
                           </div>
                         </div>
                       </div>
                     ) : (
-                      <div className="py-12 text-center bg-white/[0.02] rounded-3xl border border-dashed border-white/5">
-                        <Bell size={32} className="mx-auto text-slate-800 mb-4 opacity-30" />
-                        <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.4em] italic">No active system signals</p>
+                      <div className="py-12 text-center bg-secondary/20 rounded-3xl border border-dashed border-border">
+                        <Bell size={32} className="mx-auto text-slate-400 mb-4 opacity-30" />
+                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] italic">No active system signals</p>
                       </div>
                     )}
                   </div>
@@ -237,12 +261,30 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                       setShowNotifications(false);
                       (window as any).location.href = "/admin/requests";
                     }}
-                    className="w-full mt-6 py-3 text-[9px] font-black uppercase text-slate-600 hover:text-orange-500 transition-all tracking-[0.4em] italic border-t border-white/5 pt-4"
+                    className="w-full mt-6 py-3 text-[9px] font-black uppercase text-slate-500 hover:text-orange-500 transition-all tracking-[0.4em] italic border-t border-border pt-4"
                   >
                     View Registry Ledger
                   </button>
                 </div>
               )}
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button
+                onClick={toggle}
+                className="h-9 w-9 flex items-center justify-center rounded-xl bg-secondary border border-border text-slate-400 transition-all hover:text-foreground hover:bg-secondary/80 active:scale-95"
+                title={isDark ? "Switch to Bright Mode" : "Switch to Deep Galaxy"}
+              >
+                {isDark ? <Sun size={18} /> : <Moon size={18} />}
+              </button>
+
+              <button
+                onClick={logout}
+                className="hidden sm:flex h-9 px-4 items-center justify-center gap-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 transition-all hover:bg-red-500 hover:text-white active:scale-95 text-[10px] font-black uppercase tracking-widest"
+              >
+                <LogOut size={16} />
+                Log Out
+              </button>
             </div>
           </div>
         </header>
