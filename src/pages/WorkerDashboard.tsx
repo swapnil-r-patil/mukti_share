@@ -544,10 +544,16 @@ const WorkerDashboard = () => {
     return () => unsubscribe();
   }, [user, skillFilter, distanceFilter, searchTerm]);
 
-  if (!user || user.role !== "worker") {
-    navigate("/");
-    return null;
+  useEffect(() => {
+    if (!loading && (!user || user.role !== "worker")) {
+      navigate("/");
+    }
+  }, [user, loading, navigate]);
+
+  if (loading || !user) {
+    return <div className="flex h-screen w-full items-center justify-center bg-[#020617] text-white font-black italic">Loading Workspace...</div>;
   }
+  if (user.role !== "worker") return null;
 
   // Calculate simple relative time for Last Active
   const getRelativeTime = (date: any) => {
@@ -694,9 +700,9 @@ const WorkerDashboard = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="min-w-0">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black italic tracking-tighter text-foreground uppercase truncate">
-              {t('welcome')}, {user.name.split(" ")[0]} 
+              {t('welcome')}, {(user?.name || "Worker").split(" ")[0]} 
                            <div className="flex flex-col">
-                    <span className="text-2xl font-black text-foreground italic tracking-tighter uppercase">{user.name}</span>
+                    <span className="text-2xl font-black text-foreground italic tracking-tighter uppercase">{user?.name || "Worker"}</span>
                     <div className="flex items-center gap-2 mt-1">
                       <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 border border-orange-500/20">
                         <MapPin size={10} className="text-orange-500" />
