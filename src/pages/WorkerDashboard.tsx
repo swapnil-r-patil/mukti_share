@@ -89,8 +89,8 @@ const WorkerDashboard = () => {
   }, [verificationsList, completedJobs, isDemoWorker]);
   
   // Derived states from user profile
-  const requestSent = user?.status === 'pending' || user?.status === 'verified';
-  const isApproved = !!user?.isVerifiedByAdmin || user?.status === 'verified';
+  const requestSent = (user as any)?.status === 'pending' || (user as any)?.status === 'verified';
+  const isApproved = !!user?.isVerifiedByAdmin || (user as any)?.status === 'verified';
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 30000);
@@ -377,9 +377,9 @@ const WorkerDashboard = () => {
     if (score > 0) {
       const updates: any = {};
       if (score !== (user.muktiScore || 0)) updates.muktiScore = score;
-      if (dashboardData.financial.incomeRange.min !== user.minIncome) updates.minIncome = dashboardData.financial.incomeRange.min;
-      if (dashboardData.financial.incomeRange.max !== user.maxIncome) updates.maxIncome = dashboardData.financial.incomeRange.max;
-      if (dashboardData.financial.totalEarnings !== user.totalEarnings) updates.totalEarnings = dashboardData.financial.totalEarnings;
+      if (dashboardData.financial.incomeRange.min !== (user as any).minIncome) updates.minIncome = dashboardData.financial.incomeRange.min;
+      if (dashboardData.financial.incomeRange.max !== (user as any).maxIncome) updates.maxIncome = dashboardData.financial.incomeRange.max;
+      if (dashboardData.financial.totalEarnings !== (user as any).totalEarnings) updates.totalEarnings = dashboardData.financial.totalEarnings;
       
       if (Object.keys(updates).length > 0) {
         updateDoc(doc(db, "users", user.id), updates).catch(() => {});
@@ -653,7 +653,7 @@ const WorkerDashboard = () => {
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5)
         .map(([skill, count], i) => ({
-          skill: skill && skill.length > 0 ? skill.charAt(0).toUpperCase() + skill.slice(1) : 'Skill',
+          skill: skill.charAt(0).toUpperCase() + skill.slice(1),
           demand: Math.min(100, Math.round(count * 15 + 20)),
           growth: `+${Math.round(Math.random() * 15 + 5)}%`
         }));
@@ -751,53 +751,6 @@ const WorkerDashboard = () => {
           </div>
         </div>
       </div>
-
-      {/* 7-Day QR Notification Banner */}
-      {!isDemoWorker && (
-        <div className={`mb-8 p-5 rounded-2xl border flex items-start sm:items-center gap-4 animate-fade-up relative overflow-hidden group ${
-          qrNeedsScan 
-            ? 'bg-red-50/80 border-red-200 shadow-[0_8px_30px_rgb(220,38,38,0.12)]' 
-            : 'bg-[#E6EEF8]/80 border-blue-200/50 shadow-[0_8px_30px_rgb(11,61,145,0.08)]'
-        }`} style={{ animationDelay: "20ms" }}>
-          <div className="absolute inset-0 bg-white/40 blur-xl group-hover:bg-white/60 transition-colors pointer-events-none" />
-          <div className={`relative z-10 p-3.5 rounded-xl shrink-0 ${
-            qrNeedsScan ? 'bg-red-100 text-red-600 shadow-inner' : 'bg-blue-100 text-[#0B3D91] shadow-inner'
-          }`}>
-            <AlertCircle className="w-6 h-6" />
-          </div>
-          <div className="relative z-10 flex-1 min-w-0">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h3 className={`font-black text-lg sm:text-xl italic tracking-tight uppercase ${
-                  qrNeedsScan ? 'text-red-900' : 'text-[#0B3D91]'
-                }`}>
-                  {qrNeedsScan ? "QR SCAN REQUIRED" : "Account Status Active"}
-                </h3>
-                <p className={`text-sm sm:text-base font-medium mt-0.5 ${
-                  qrNeedsScan ? 'text-red-700' : 'text-slate-600'
-                }`}>
-                  {qrNeedsScan 
-                    ? "Your 7-day validation has expired. You must show your QR code to a customer today to stay active."
-                    : `You have ${qrDaysRemaining} day${qrDaysRemaining === 1 ? '' : 's'} remaining before you need to rescan your QR.`}
-                </p>
-              </div>
-              
-              {/* Optional Call To Action Button embedded inside */}
-              {qrNeedsScan && (
-                <button
-                  onClick={() => {
-                    // Quick scroll/action to the QR/Download
-                    document.getElementById('report_download')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white px-5 py-2.5 rounded-xl text-sm font-black italic tracking-widest uppercase shadow-lg shadow-red-500/20 transition-all shrink-0 w-full sm:w-auto"
-                >
-                  View QR
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Quick Action Buttons */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 mb-8 relative z-10 opacity-0 animate-fade-up" style={{ animationDelay: "60ms" }}>
@@ -1527,7 +1480,7 @@ const WorkerDashboard = () => {
           <div className="relative w-full max-w-md bg-card p-8 rounded-[2.5rem] border border-orange-500/20 font-black italic">
             <button onClick={() => setSelectedVerification(null)} className="absolute top-8 right-8 p-3 hover:bg-white/5 rounded-2xl"><X size={20} className="text-slate-600" /></button>
             <div className="flex flex-col items-center mt-6">
-              <div className="h-20 w-20 mb-6 flex items-center justify-center rounded-3xl bg-orange-500 text-white text-3xl font-black">{((selectedVerification.customerName || "Customer") as string).charAt(0)}</div>
+              <div className="h-20 w-20 mb-6 flex items-center justify-center rounded-3xl bg-orange-500 text-white text-3xl font-black">{(selectedVerification.customerName || "Customer").charAt(0)}</div>
               <h3 className="text-2xl font-black text-foreground uppercase">{selectedVerification.customerName || "Customer"}</h3>
               <div className="mt-6 bg-white/5 px-6 py-2.5 rounded-2xl border border-border"><span className="text-sm font-black text-orange-500 italic">{selectedVerification.rating}.0 Rating</span></div>
             </div>

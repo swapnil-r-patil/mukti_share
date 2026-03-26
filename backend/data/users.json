@@ -13,5 +13,20 @@
     "muktiScore": 0,
     "status": "pending",
     "isVerifiedByAdmin": false
+  },
+  {
+    "id": "YkvZUzPMRjPl1kWvIeJCoLXYwaO2",
+    "phone": "1234561234",
+    "name": "bann id",
+    "role": "worker",
+    "skill": "abc",
+    "location": "Wagholi, Maharashtra",
+    "photo": "",
+    "workerType": 1,
+    "otpVerified": true,
+    "lastActive": {},
+    "muktiScore": 0,
+    "status": "pending",
+    "isVerifiedByAdmin": false
   }
 ]

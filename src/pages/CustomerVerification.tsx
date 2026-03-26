@@ -609,6 +609,39 @@ const CustomerVerification = () => {
       })));
 
       if (fraudError) {
+        // Auto-Suspend Trigger Logic
+        const isSevereFraud = fraudError.toLowerCase().includes("duplicate") || 
+                              fraudError.toLowerCase().includes("mismatch") ||
+                              fraudError.toLowerCase().includes("suspicious");
+
+        if (isSevereFraud) {
+          const alertPayload = {
+            workerId: targetWorkerId,
+            customerId: user.id,
+            rating, 
+            comment,
+            location: locationData,
+            timestamp: serverTimestamp(),
+            fraudFlag: true,
+            fraudReason: fraudError,
+            fraudAction: "blocked",
+            workerName: currentWorker?.name || "Worker",
+            customerName: user.name || "Customer",
+            deviceId: getDeviceId(),
+            photoUrl: capturedPhoto || null
+          };
+          
+          // Log alert for admins
+          await addDoc(collection(db, "verifications"), alertPayload);
+          
+          // Active Enforcement (Auto-Suspend)
+          await updateDoc(doc(db, "users", targetWorkerId), {
+            isBanned: true,
+            status: "banned",
+            accountStatus: "suspended"
+          });
+        }
+        
         setErrorMsg(fraudError);
         setStep("error");
         setIsSaving(false);

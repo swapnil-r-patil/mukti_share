@@ -38,6 +38,44 @@ const AdminFraud = () => {
     return () => unsubscribe();
   }, []);
 
+  const handleRemoveAll = async () => {
+    if (isDemo) return toast.error("Action disabled in demo mode");
+    if (!window.confirm("Are you sure you want to permanently clear ALL fraud records?")) return;
+    try {
+      const { deleteDoc } = await import("firebase/firestore");
+      const promises = alerts.map(a => deleteDoc(doc(db, "verifications", a.id)));
+      await Promise.all(promises);
+      toast.success("All fraud records cleared.");
+    } catch(err: any) {
+      toast.error("Action failed: " + err.message);
+    }
+  };
+
+  const handleUnblockAll = async () => {
+    if (isDemo) return toast.error("Action disabled in demo mode");
+    if (!window.confirm("Are you sure you want to unblock ALL workers shown here?")) return;
+    try {
+      const promises: any[] = [];
+      alerts.forEach(a => {
+        if (a.fraudAction === "blocked") {
+          promises.push(updateDoc(doc(db, "verifications", a.id), { fraudAction: null }));
+        }
+        if (a.workerId) {
+          // Unblock the worker in users collection
+          promises.push(updateDoc(doc(db, "users", a.workerId), {
+            isBanned: false,
+            status: "active",
+            accountStatus: "active"
+          }));
+        }
+      });
+      await Promise.all(promises);
+      toast.success("All workers have been unblocked.");
+    } catch(err: any) {
+      toast.error("Action failed: " + err.message);
+    }
+  };
+  
   const handleAction = async (id: string, action: string, workerId?: string) => {
     if (isDemo) {
       toast.error('Action disabled in demo mode');
@@ -55,6 +93,16 @@ const AdminFraud = () => {
           });
         }
         toast.success("Alert ignored and worker ban removed");
+      } else if (action === "unblock") {
+        await updateDoc(doc(db, "verifications", id), { fraudAction: null });
+        if (workerId) {
+          await updateDoc(doc(db, "users", workerId), {
+            isBanned: false,
+            status: "active",
+            accountStatus: "active"
+          });
+        }
+        toast.success("Worker has been unblocked");
       } else if (action === "review") {
         await updateDoc(doc(db, "verifications", id), { fraudAction: "review" });
         toast.success("Marked for manual review");
@@ -68,6 +116,13 @@ const AdminFraud = () => {
           });
         }
         toast.error("Source blocked and suspended");
+      } else if (action === "delete") {
+        // Confirm before delete
+        if (window.confirm("Are you sure you want to permanently clear this fraud record?")) {
+          const { deleteDoc } = await import("firebase/firestore");
+          await deleteDoc(doc(db, "verifications", id));
+          toast.success("Fraud record cleared permanently");
+        }
       }
     } catch(err: any) {
        toast.error("Action failed: " + err.message);
@@ -76,14 +131,25 @@ const AdminFraud = () => {
 
   return (
     <div className="space-y-8 pb-12">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col xl:flex-row justify-between xl:items-end gap-6">
         <div className="space-y-1">
           <h1 className="text-4xl font-black text-foreground italic tracking-tighter uppercase">{t("admin_sidebar_fraud")}</h1>
           <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px]">Real-time anomaly detection & security enforcement</p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4 items-center">
+           <div className="bg-orange-500/10 border border-orange-500/20 px-4 py-3 rounded-2xl hidden md:flex items-center gap-2 text-[9px] font-black text-orange-500 uppercase tracking-widest">
+             <ShieldAlert size={14} className="animate-pulse" /> Auto-Suspend Active
+           </div>
+           
+           <button onClick={handleUnblockAll} className="bg-background border border-border px-5 py-3 rounded-2xl flex items-center gap-2 text-muted-foreground hover:text-emerald-500 hover:border-emerald-500/20 transition-all font-black uppercase text-[10px] tracking-widest active:scale-95">
+              <CheckCircle size={16} /> Unblock All
+           </button>
+           <button onClick={handleRemoveAll} className="bg-background border border-border px-5 py-3 rounded-2xl flex items-center gap-2 text-muted-foreground hover:text-red-500 hover:border-red-500/20 transition-all font-black uppercase text-[10px] tracking-widest active:scale-95">
+              <Trash2 size={16} /> Clear All
+           </button>
+
            <div className="bg-red-500/10 border border-red-500/20 px-6 py-3 rounded-2xl flex items-center gap-3">
-              <ShieldAlert className="text-red-500" size={20} />
+              <AlertTriangle className="text-red-500" size={20} />
               <div className="text-xl font-black text-red-500">{alerts.filter(a => (a.muktiScore || 100) < 60).length}</div>
               <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">High Risk Alerts</div>
            </div>
@@ -155,28 +221,45 @@ const AdminFraud = () => {
                   </div>
                </div>
 
-                <div className="w-full lg:w-72 space-y-3 pt-4 lg:pt-0">
+                 <div className="w-full lg:w-72 space-y-3 pt-4 lg:pt-0">
                   <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-4">Tactical Response</div>
-                  {alert.fraudAction !== 'review' && alert.fraudAction !== 'blocked' && (
-                    <button onClick={() => handleAction(alert.id, "review", alert.workerId)} className="w-full h-12 rounded-xl bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95">
-                      Mark Under Review
-                    </button>
-                  )}
-                  {alert.fraudAction !== 'blocked' && (
-                  <div className="grid grid-cols-2 gap-3">
-                     <button onClick={() => handleAction(alert.id, "block", alert.workerId)} className="h-12 rounded-xl border border-red-500/30 text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all active:scale-95">
-                       Block Source
-                     </button>
-                     <button onClick={() => handleAction(alert.id, "ignore", alert.workerId)} className="h-12 rounded-xl border border-border text-muted-foreground font-black text-[10px] uppercase tracking-widest hover:bg-secondary transition-all active:scale-95">
-                       Ignore Alert
-                     </button>
-                  </div>
-                  )}
-                  {alert.fraudAction === 'blocked' && (
-                    <div className="w-full h-12 flex items-center justify-center rounded-xl bg-red-500/10 text-red-500 border border-red-500/20 font-black text-[10px] uppercase tracking-widest">
-                      SYSTEM BLOCKED
+                  
+                  {alert.fraudAction === 'blocked' ? (
+                    <div className="space-y-3">
+                      <div className="w-full h-12 flex items-center justify-center rounded-xl bg-red-500/10 text-red-500 border border-red-500/20 font-black text-[10px] uppercase tracking-widest">
+                        <Slash size={14} className="mr-2" /> SYSTEM BLOCKED
+                      </div>
+                      <button 
+                        onClick={() => handleAction(alert.id, "unblock", alert.workerId)} 
+                        className="w-full h-12 rounded-xl bg-emerald-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20 active:scale-95"
+                      >
+                        Unblock Worker
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {alert.fraudAction !== 'review' && (
+                        <button onClick={() => handleAction(alert.id, "review", alert.workerId)} className="w-full h-12 rounded-xl bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95">
+                          Mark Under Review
+                        </button>
+                      )}
+                      <div className="grid grid-cols-2 gap-3">
+                        <button onClick={() => handleAction(alert.id, "block", alert.workerId)} className="h-12 rounded-xl border border-red-500/30 text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all active:scale-95">
+                          Block Source
+                        </button>
+                        <button onClick={() => handleAction(alert.id, "ignore", alert.workerId)} className="h-12 rounded-xl border border-border text-muted-foreground font-black text-[10px] uppercase tracking-widest hover:bg-secondary transition-all active:scale-95">
+                          Ignore Alert
+                        </button>
+                      </div>
                     </div>
                   )}
+                  
+                  <button 
+                    onClick={() => handleAction(alert.id, "delete")} 
+                    className="w-full h-10 flex items-center justify-center gap-2 rounded-xl bg-background border border-border font-bold text-[10px] text-muted-foreground uppercase tracking-widest hover:text-red-500 hover:border-red-500/20 transition-all opacity-50 hover:opacity-100"
+                  >
+                    <Trash2 size={12} /> Clear Alert Record
+                  </button>
                </div>
             </div>
           </div>
