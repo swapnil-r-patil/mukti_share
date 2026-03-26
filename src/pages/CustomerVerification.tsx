@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import jsQR from "jsqr";
 import { useNavigate, useParams, useLocation, Link } from "react-router-dom";
 import { Camera, CheckCircle, AlertTriangle, ArrowLeft, Wrench, MapPin, Navigation, Award, Wallet, Clock, Plus, Send, User, CheckCircle2, Edit, Trash2, X, ArrowRight, UserCheck, History, Star, Mic, Image as ImageIcon, Sparkles, ShieldCheck, MapPinOff, ImageOff, Crosshair, RefreshCw, Phone } from "lucide-react";
 import StarRating from "@/components/StarRating";
@@ -189,36 +190,96 @@ const CustomerVerification = () => {
     }
   }, [urlWorkerId, location.pathname, user?.isDemo]);
 
-  // Camera handling
+  // Consolidated camera handling for both scan and photo steps
   useEffect(() => {
+    let activeStream: MediaStream | null = null;
+
     const startCamera = async () => {
+      // 1. Clean up ANY existing streams first (Global Track Reset)
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+      if (photoStreamRef.current) {
+        photoStreamRef.current.getTracks().forEach(track => track.stop());
+        photoStreamRef.current = null;
+      }
+
+      // 2. Start new camera based on step
       if (step === "scan") {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ 
             video: { facingMode: "environment" } 
           });
+          activeStream = stream;
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
             streamRef.current = stream;
+            
+            // --- QR SCANNING BRAIN ---
+            const scanQR = () => {
+              if (step !== "scan" || !videoRef.current) return;
+              if (videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA) {
+                const canvas = document.createElement("canvas");
+                canvas.width = videoRef.current.videoWidth;
+                canvas.height = videoRef.current.videoHeight;
+                const ctx = canvas.getContext("2d");
+                if (ctx) {
+                  ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+                  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                  const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: "dontInvert",
+                  });
+                  if (code) {
+                    console.log("✅ QR Signature Detected:", code.data);
+                    // Extract workerId from URL: .../verify/:workerId/:sessionId
+                    const parts = code.data.split("/");
+                    const workerId = parts[parts.length - 2];
+                    const sessionId = parts[parts.length - 1];
+                    
+                    if (workerId && sessionId) {
+                       toast.success("Identity Verified! Syncing details...");
+                       navigate(`/verify/${workerId}/${sessionId}`);
+                       return; // Exit loop
+                    }
+                  }
+                }
+              }
+              requestAnimationFrame(scanQR);
+            };
+            requestAnimationFrame(scanQR);
           }
         } catch (err) {
-          console.error("Camera access error:", err);
-          toast.error("Could not access camera.");
+          console.error("Scanning camera error:", err);
+          toast.error("Camera access error. Reset permissions.");
         }
-      } else {
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach(track => track.stop());
-          streamRef.current = null;
+      } else if (step === "photo" && !capturedPhoto) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" },
+          });
+          activeStream = stream;
+          if (photoVideoRef.current) {
+            photoVideoRef.current.srcObject = stream;
+            photoStreamRef.current = stream;
+          }
+        } catch (err) {
+          console.error("Verification camera error:", err);
+          toast.error("Photo camera failed—check gallery option.");
         }
       }
     };
+
     startCamera();
+
     return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
+      if (activeStream) {
+        activeStream.getTracks().forEach(track => track.stop());
       }
+      if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+      if (photoStreamRef.current) photoStreamRef.current.getTracks().forEach(t => t.stop());
     };
-  }, [step]);
+  }, [step, capturedPhoto]);
 
   // Listen to recent verifications
   useEffect(() => {
@@ -394,35 +455,6 @@ const CustomerVerification = () => {
     }
   };
 
-  // ── Photo camera management ──
-  useEffect(() => {
-    const startPhotoCamera = async () => {
-      if (step === "photo" && !capturedPhoto) {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" },
-          });
-          if (photoVideoRef.current) {
-            photoVideoRef.current.srcObject = stream;
-            photoStreamRef.current = stream;
-          }
-        } catch {
-          toast.error("Camera access required for photo verification.");
-        }
-      } else {
-        if (photoStreamRef.current) {
-          photoStreamRef.current.getTracks().forEach((t) => t.stop());
-          photoStreamRef.current = null;
-        }
-      }
-    };
-    startPhotoCamera();
-    return () => {
-      if (photoStreamRef.current) {
-        photoStreamRef.current.getTracks().forEach((t) => t.stop());
-      }
-    };
-  }, [step, capturedPhoto]);
 
   // ── Step 3: Capture photo ──
   const handleCapturePhoto = async () => {
