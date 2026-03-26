@@ -7,6 +7,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { db } from "@/lib/firebase";
 import { collection, query, where, onSnapshot, orderBy, limit, Timestamp } from "firebase/firestore";
+import { cn } from "@/lib/utils";
 
 const WORKER_NAV = [
   { path: "/dashboard", label: "Home", icon: LayoutDashboard },
@@ -109,16 +110,24 @@ const AppHeader = () => {
         
         {/* Center: Desktop Navigation */}
         {user && (
-          <nav className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-2xl border border-border bg-card/40 p-1.5 backdrop-blur-2xl">
+          <nav className={cn(
+            "hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-2xl border p-1.5 backdrop-blur-2xl transition-all",
+            isDark ? "bg-card/40 border-border" : "bg-white/90 border-slate-200 shadow-xl shadow-black/5"
+          )}>
             {navItems.map((item) => {
               const isActive = location.pathname === item.path || (item.path === "/verify" && location.pathname.startsWith("/verify") && !location.pathname.includes("request"));
               return (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] transition-all ${
-                    isActive ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20 italic" : "text-slate-500 hover:text-white hover:bg-white/5"
-                  }`}
+                  className={cn(
+                    "flex items-center gap-2 rounded-xl px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] transition-all",
+                    isActive 
+                      ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20 italic" 
+                      : isDark 
+                        ? "text-slate-500 hover:text-white hover:bg-white/5" 
+                        : "text-slate-600 hover:text-foreground hover:bg-secondary"
+                  )}
                 >
                   <item.icon size={16} strokeWidth={isActive ? 3 : 2} />
                   {item.label}
@@ -134,7 +143,7 @@ const AppHeader = () => {
             <div className="hidden items-center gap-3 sm:flex">
               <div className="flex flex-col text-right">
                 <span className="text-xs font-black text-foreground italic tracking-tight">{user.name}</span>
-                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mt-0.5">{user.role}</span>
+                <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mt-0.5 opacity-70">{user.role}</span>
               </div>
               <div className="h-9 w-9 overflow-hidden rounded-xl border border-orange-500/30 bg-secondary shadow-lg shadow-orange-500/10">
                 {user.photo ? (
@@ -158,7 +167,7 @@ const AppHeader = () => {
           
           <button
             onClick={toggle}
-            className="h-9 w-9 flex items-center justify-center rounded-xl bg-secondary border border-border text-slate-400 transition-all hover:text-foreground hover:bg-secondary/80 active:scale-95"
+            className="h-9 w-9 flex items-center justify-center rounded-xl bg-secondary border border-border text-muted-foreground transition-all hover:text-foreground hover:bg-secondary/80 active:scale-95"
           >
             {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
@@ -167,7 +176,12 @@ const AppHeader = () => {
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className={`h-9 w-9 flex items-center justify-center rounded-xl transition-all active:scale-95 relative border ${showNotifications ? "bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/20" : "bg-white/5 border-white/10 text-slate-400 hover:text-white"}`}
+                className={cn(
+                  "h-9 w-9 flex items-center justify-center rounded-xl transition-all active:scale-95 relative border",
+                  showNotifications 
+                    ? "bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/20" 
+                    : isDark ? "bg-white/5 border-white/10 text-muted-foreground hover:text-white" : "bg-secondary border-border text-muted-foreground hover:text-foreground"
+                )}
               >
                 <Bell size={18} />
                 {notifications.length > 0 && (
@@ -185,20 +199,20 @@ const AppHeader = () => {
                    </div>
                    <div className="space-y-4 max-h-72 overflow-y-auto">
                       {notifications.length > 0 ? notifications.slice(0, 5).map(n => (
-                        <div key={n.id} className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 transition-all hover:border-orange-500/20 group">
+                        <div key={n.id} className="flex gap-4 p-4 rounded-2xl bg-secondary/50 border border-border transition-all hover:border-orange-500/20 group">
                            <div className={`p-2.5 rounded-xl h-fit group-hover:scale-110 transition-transform ${n.type === 'verified' ? 'bg-emerald-500/10 text-emerald-500' : n.type === 'rejected' ? 'bg-red-500/10 text-red-500' : 'bg-orange-500/10 text-orange-500'}`}>
                              {n.type === 'verified' ? <ShieldCheck size={16} /> : n.type === 'rejected' ? <Bell size={16} /> : <PlusCircle size={16} />}
                            </div>
                            <div className="min-w-0">
                               <div className="font-black text-sm text-foreground italic truncate uppercase tracking-tighter">{n.title}</div>
-                              <div className="text-[10px] font-bold text-slate-500 mt-1 uppercase leading-relaxed">{n.message}</div>
-                              <div className="text-[8px] font-bold text-slate-700 mt-1 uppercase tracking-widest">{n.time}</div>
+                              <div className="text-[10px] font-bold text-muted-foreground mt-1 uppercase leading-relaxed opacity-80">{n.message}</div>
+                              <div className="text-[8px] font-bold text-muted-foreground mt-1 uppercase tracking-widest opacity-60">{n.time}</div>
                            </div>
                         </div>
                       )) : (
                         <div className="py-12 text-center bg-secondary/20 rounded-3xl border border-dashed border-border text-foreground">
-                           <Bell size={32} className="mx-auto text-slate-400 mb-4 opacity-30" />
-                           <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] italic">No active notifications</p>
+                           <Bell size={32} className="mx-auto text-muted-foreground mb-4 opacity-30" />
+                           <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.3em] italic opacity-60">No active notifications</p>
                         </div>
                       )}
                    </div>

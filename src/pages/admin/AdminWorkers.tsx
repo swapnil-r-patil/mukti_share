@@ -136,8 +136,8 @@ const AdminWorkers = () => {
     <div className="space-y-8 pb-12">
       <div className="flex justify-between items-end">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black text-white italic tracking-tighter uppercase">{t("admin_sidebar_workers")}</h1>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Registry workforce management & financial profiling</p>
+          <h1 className="text-4xl font-black text-foreground italic tracking-tighter uppercase">{t("admin_sidebar_workers")}</h1>
+          <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px]">Registry workforce management & financial profiling</p>
         </div>
         <div className="flex gap-3">
           <button 
@@ -146,54 +146,54 @@ const AdminWorkers = () => {
           >
             Reset All Verifications
           </button>
-          <button className="h-12 px-6 rounded-xl bg-white/5 border border-white/5 flex items-center gap-3 text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-all">
+          <button className="h-12 px-6 rounded-xl bg-secondary border border-border flex items-center gap-3 text-[10px] font-black text-foreground uppercase tracking-widest hover:bg-secondary/80 transition-all">
             <Download size={16} /> Export CSV
           </button>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 bg-slate-900/50 p-6 rounded-[2rem] border border-white/5">
+      <div className="flex flex-wrap gap-4 bg-card p-6 rounded-[2rem] border border-border">
         <div className="relative flex-1 min-w-[300px]">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
           <input 
             type="text" 
             placeholder="Search by name or skill..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-950/50 border border-white/5 rounded-xl pl-12 pr-4 py-3 text-sm text-white outline-none focus:border-orange-500 transition-all"
+            className="w-full bg-secondary border border-border rounded-xl pl-12 pr-4 py-3 text-sm text-foreground outline-none focus:border-orange-500 transition-all placeholder:text-muted-foreground/50"
           />
         </div>
         <select 
           value={filterSkill}
           onChange={(e) => setFilterSkill(e.target.value)}
-          className="bg-slate-950/50 border border-white/5 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-orange-500 min-w-[150px] font-bold uppercase tracking-wider"
+          className="bg-secondary border border-border rounded-xl px-4 py-3 text-sm text-foreground outline-none focus:border-orange-500 min-w-[150px] font-bold uppercase tracking-wider"
         >
           <option value="All">All Skills</option>
           <option value="Maid">Maid</option>
           <option value="Electrician">Electrician</option>
           <option value="Plumber">Plumber</option>
         </select>
-        <button className="px-6 py-3 rounded-xl bg-orange-600 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-orange-600/20">
+        <button className="px-6 py-3 rounded-xl bg-orange-600 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-orange-600/20 active:scale-95 transition-transform">
           Apply Filters
         </button>
       </div>
 
       {/* Workers Table */}
-      <div className="bg-slate-900 rounded-[3rem] border border-white/5 overflow-hidden shadow-2xl">
+      <div className="bg-card rounded-[3rem] border border-border overflow-hidden shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/5 bg-white/5">
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Worker Profile</th>
-                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Location / Skill</th>
-                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-center">Mukti Score</th>
-                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Financal Profile</th>
-                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Risk</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-right">Actions</th>
+              <tr className="border-b border-border bg-secondary/50">
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground text-center">Worker Profile</th>
+                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground text-center">Location / Skill</th>
+                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground text-center">Mukti Score</th>
+                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground text-center">Financial Profile</th>
+                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground text-center">Risk</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-8 py-20 text-center">
@@ -211,28 +211,28 @@ const AdminWorkers = () => {
                 const risk = getFraudRiskLevel(worker.muktiScore || 0);
                 
                 return (
-                  <tr key={worker.id} className="hover:bg-white/[0.02] transition-colors group">
+                  <tr key={worker.id} className="hover:bg-secondary/30 transition-colors group">
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 flex items-center justify-center font-black text-slate-400 group-hover:scale-110 transition-transform">
-                          {worker.photo ? <img src={worker.photo} className="h-full w-full rounded-2xl object-cover" /> : worker.name[0]}
+                        <div className="h-12 w-12 rounded-2xl bg-secondary border border-border flex items-center justify-center font-black text-muted-foreground group-hover:scale-110 transition-transform overflow-hidden shadow-inner">
+                          {worker.photo ? <img src={worker.photo} className="h-full w-full object-cover" /> : <div className="text-xl italic opacity-50">{worker.name[0]}</div>}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <div className="text-sm font-black text-white">{worker.name}</div>
+                            <div className="text-sm font-black text-foreground">{worker.name}</div>
                             {worker.isVerifiedByAdmin && (
                               <div className="text-emerald-500" title="Admin Verified">
                                 <CheckCircle2 size={12} fill="currentColor" className="fill-emerald-500/20" />
                               </div>
                             )}
                           </div>
-                          <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">{worker.phone}</div>
+                          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{worker.phone}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-6">
-                      <div className="text-xs font-bold text-white uppercase tracking-wider">{worker.skill || "N/A"}</div>
-                      <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">{worker.location || "N/A"}</div>
+                    <td className="px-6 py-6 text-center">
+                      <div className="text-xs font-black text-foreground uppercase tracking-wider italic">{worker.skill || "N/A"}</div>
+                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{worker.location || "N/A"}</div>
                     </td>
                     <td className="px-6 py-6 text-center">
                       <div className={`inline-block px-3 py-1 rounded-lg font-black text-sm ${
@@ -242,43 +242,47 @@ const AdminWorkers = () => {
                         {worker.muktiScore || 0}
                       </div>
                     </td>
-                    <td className="px-6 py-6">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-slate-600 uppercase leading-none">{hasRealData ? 'Real:' : 'Est:'}</span>
-                        <span className="text-sm font-black text-emerald-500">₹{Math.round(estIncome).toLocaleString()}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-slate-600 uppercase leading-none">Loan:</span>
-                        <span className="text-[11px] font-black text-indigo-400">₹{eligibility.maxLoan.toLocaleString()}</span>
+                    <td className="px-6 py-6 text-center">
+                      <div className="flex flex-col items-center justify-center gap-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase leading-none">{hasRealData ? 'Real:' : 'Est:'}</span>
+                          <span className="text-sm font-black text-emerald-500">₹{Math.round(estIncome).toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase leading-none">Loan:</span>
+                          <span className="text-[11px] font-black text-indigo-400">₹{eligibility.maxLoan.toLocaleString()}</span>
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-6">
-                      <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${
-                        risk === 'LOW' ? 'text-emerald-500' : risk === 'MEDIUM' ? 'text-orange-500' : 'text-red-500'
-                      }`}>
-                        <div className={`h-2 w-2 rounded-full ${
-                          risk === 'LOW' ? 'bg-emerald-500' : risk === 'MEDIUM' ? 'bg-orange-500' : 'bg-red-500'
-                        }`} />
-                        {risk} Risk
+                      <div className="flex flex-col items-center">
+                        <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${
+                          risk === 'LOW' ? 'text-emerald-500' : risk === 'MEDIUM' ? 'text-orange-500' : 'text-red-500'
+                        }`}>
+                          <div className={`h-2 w-2 rounded-full ${
+                            risk === 'LOW' ? 'bg-emerald-500' : risk === 'MEDIUM' ? 'bg-orange-500' : 'bg-red-500'
+                          }`} />
+                          {risk} Risk
+                        </div>
                       </div>
                     </td>
                     <td className="px-8 py-6 text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-center gap-2">
                         <button 
                           onClick={() => handleAction(worker.id, "suspend")}
-                          className="p-2.5 rounded-xl bg-white/5 text-slate-500 hover:text-red-500 hover:bg-red-500/10 transition-all shadow-sm"
+                          className="p-2.5 rounded-xl bg-secondary text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-all shadow-sm border border-border"
                           title="Suspend Account"
                         >
                           <XCircle size={18} />
                         </button>
                         <button 
                           onClick={() => handleAction(worker.id, worker.isVerifiedByAdmin ? "unverify" : "verify")}
-                          className={`p-2.5 rounded-xl transition-all shadow-sm ${worker.isVerifiedByAdmin ? 'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20' : 'bg-white/5 text-slate-500 hover:text-emerald-500 hover:bg-emerald-500/10'}`}
+                          className={`p-2.5 rounded-xl transition-all shadow-sm border ${worker.isVerifiedByAdmin ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-secondary text-muted-foreground border-border hover:text-emerald-500 hover:bg-emerald-500/10'}`}
                           title={worker.isVerifiedByAdmin ? "Revoke Verification" : "Verify Worker"}
                         >
                           <CheckCircle2 size={18} />
                         </button>
-                        <button className="p-2.5 rounded-xl bg-white/5 text-slate-500 hover:text-blue-500 hover:bg-blue-500/10 transition-all shadow-sm">
+                        <button className="p-2.5 rounded-xl bg-secondary text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 transition-all shadow-sm border border-border">
                           <ExternalLink size={18} />
                         </button>
                       </div>
@@ -291,15 +295,15 @@ const AdminWorkers = () => {
         </div>
         
         {/* Pagination Mock */}
-        <div className="px-8 py-6 bg-white/[0.02] border-t border-white/5 flex items-center justify-between">
-          <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+        <div className="px-8 py-6 bg-secondary/30 border-t border-border flex items-center justify-between">
+          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
             Showing 1-10 of {filteredWorkers.length} workers
           </div>
           <div className="flex gap-2">
-            <button className="p-2 rounded-lg bg-white/5 text-slate-500 hover:text-white disabled:opacity-30" disabled>
+            <button className="p-2 rounded-lg bg-secondary text-muted-foreground hover:text-foreground disabled:opacity-30 border border-border" disabled>
               <ChevronLeft size={18} />
             </button>
-            <button className="p-2 rounded-lg bg-white/5 text-slate-500 hover:text-white">
+            <button className="p-2 rounded-lg bg-secondary text-muted-foreground hover:text-foreground border border-border">
               <ChevronRight size={18} />
             </button>
           </div>

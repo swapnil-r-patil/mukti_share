@@ -123,7 +123,7 @@ const CustomerDashboard = () => {
           Welcome Back, {user.name.split(" ")[0]} 
         </h2>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 mt-2 pl-1 italic">
-          <p className="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">
+          <p className="text-[9px] sm:text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em]">
             REGISTRY OVERSIGHT & TRUST CONTROL ACTIVE
           </p>
           <div className="flex items-center gap-2">
@@ -138,7 +138,7 @@ const CustomerDashboard = () => {
                 setIsUpdatingLocation(false);
               }}
               disabled={isUpdatingLocation}
-              className="p-1.5 rounded-lg bg-white/5 border border-border text-slate-500 hover:text-foreground transition-all disabled:opacity-50"
+              className="p-1.5 rounded-lg bg-secondary border border-border text-muted-foreground hover:text-foreground transition-all disabled:opacity-50"
             >
                <RefreshCw size={10} className={isUpdatingLocation ? "animate-spin" : ""} />
             </button>
@@ -165,20 +165,20 @@ const CustomerDashboard = () => {
                 <h3 className="text-2xl font-black text-foreground italic tracking-tighter uppercase">{user.name}</h3>
                 <div className="flex flex-col items-center gap-3 mt-4">
                    <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] px-5 py-2 rounded-full border ${badgeColor} italic`}>
-                      <ShieldCheck size={14} strokeWidth={3} /> {trustLevel}
+                       <ShieldCheck size={14} strokeWidth={3} /> {trustLevel}
                    </div>
-                   <div className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] italic mb-2">
-                      {customerType === 0 ? "LONG-TERM CUSTOMER (0)" : "OCCASIONAL CUSTOMER (1)"}
+                   <div className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.4em] italic mb-2 opacity-60">
+                       {customerType === 0 ? "LONG-TERM CUSTOMER (0)" : "OCCASIONAL CUSTOMER (1)"}
                    </div>
                 </div>
 
                 {/* Trust Score Progress */}
                 <div className="mt-8 space-y-3">
-                   <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 px-1">
+                   <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground px-1 opacity-70">
                       <span>Trust Integrity</span>
                       <span className="text-orange-500">{trustScore}%</span>
                    </div>
-                   <div className="h-3 w-full bg-slate-900 rounded-full overflow-hidden border border-border p-0.5 shadow-inner">
+                   <div className="h-3 w-full bg-secondary rounded-full overflow-hidden border border-border p-0.5 shadow-inner">
                       <div 
                          className="h-full bg-gradient-to-r from-orange-600 to-orange-400 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(249,115,22,0.5)]"
                          style={{ width: `${trustScore}%` }}
@@ -190,19 +190,19 @@ const CustomerDashboard = () => {
 
           {/* Section 2: Contribution Metrics */}
           <div className="rounded-[2rem] bg-card p-4 sm:p-6 border border-border shadow-inner grid grid-cols-2 gap-3 sm:gap-4">
-             <div className="text-center p-4 rounded-2xl bg-white/5 border border-border">
+             <div className="text-center p-4 rounded-2xl bg-secondary/30 border border-border">
                 <div className="text-2xl font-black text-orange-500 italic tracking-tighter">{verifications.length}</div>
-                <div className="text-[8px] font-black text-slate-600 uppercase tracking-[0.2em] mt-1">Verified Jobs</div>
+                <div className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1 opacity-70">Verified Jobs</div>
              </div>
-             <div className="text-center p-4 rounded-2xl bg-white/5 border border-border">
+             <div className="text-center p-4 rounded-2xl bg-secondary/30 border border-border">
                 <div className="text-2xl font-black text-foreground italic tracking-tighter">{user.points || 0}</div>
-                <div className="text-[8px] font-black text-slate-600 uppercase tracking-[0.2em] mt-1">Credits Earned</div>
+                <div className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1 opacity-70">Credits Earned</div>
              </div>
           </div>
 
           {/* Section 3: Alerts & Warnings */}
           <div className="rounded-[2rem] bg-card p-6 border border-border font-black italic">
-             <div className="text-[9px] font-black uppercase text-slate-600 tracking-[0.3em] mb-4 flex items-center gap-3">
+             <div className="text-[9px] font-black uppercase text-muted-foreground tracking-[0.3em] mb-4 flex items-center gap-3 opacity-80">
                 <ShieldAlert size={16} className="text-orange-500" /> Security Intelligence
              </div>
              <div className="space-y-3">
@@ -214,7 +214,7 @@ const CustomerDashboard = () => {
                     <Info size={12} /> Long-term pattern established
                   </div>
                 )}
-                <div className="text-[8px] font-black text-slate-600 flex items-center gap-3 bg-white/5 px-4 py-3 rounded-xl border border-border uppercase tracking-widest leading-relaxed">
+                <div className="text-[8px] font-black text-muted-foreground flex items-center gap-3 bg-secondary/50 px-4 py-3 rounded-xl border border-border uppercase tracking-widest leading-relaxed">
                    <Clock size={12} /> Registry Rule: 7-day cooldown on same worker
                 </div>
              </div>
@@ -246,10 +246,10 @@ const CustomerDashboard = () => {
                    </div>
                    <div className="text-left font-black italic">
                       <div className="text-xs sm:text-xl tracking-tighter uppercase whitespace-nowrap">Find</div>
-                      <div className="text-[6px] sm:text-[8px] text-slate-500 uppercase tracking-widest italic whitespace-nowrap">Skill Signal</div>
+                      <div className="text-[6px] sm:text-[8px] text-muted-foreground uppercase tracking-widest italic whitespace-nowrap opacity-60">Skill Signal</div>
                    </div>
                 </div>
-                <ArrowRight size={20} className="text-slate-700 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={20} className="text-muted-foreground group-hover:translate-x-1 transition-transform" />
              </button>
           </div>
 
@@ -266,26 +266,26 @@ const CustomerDashboard = () => {
 
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
-                   <div className="text-[9px] font-black text-slate-600 uppercase tracking-[0.3em] pl-1">Primary Success Indicators</div>
+                   <div className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.3em] pl-1 opacity-70">Primary Success Indicators</div>
                    <div className="flex flex-wrap gap-3">
                       {commonWords.length > 0 ? commonWords.map(word => (
                         <span key={word} className="px-5 py-2.5 rounded-2xl bg-orange-500/10 text-orange-400 text-[10px] font-black uppercase tracking-widest border border-orange-500/10 shadow-inner">
                            {word}
                         </span>
                       )) : (
-                        <span className="text-[10px] text-slate-800 uppercase tracking-widest pl-1 italic">Pending Data Analysis...</span>
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-widest pl-1 italic opacity-40">Pending Data Analysis...</span>
                       )}
                    </div>
                 </div>
                 <div className="space-y-4">
-                   <div className="text-[9px] font-black text-slate-600 uppercase tracking-[0.3em] pl-1">Detected Friction Points</div>
+                   <div className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.3em] pl-1 opacity-70">Detected Friction Points</div>
                    <div className="flex flex-wrap gap-3">
                       {commonIssues.length > 0 ? commonIssues.map(issue => (
                         <span key={issue} className="px-5 py-2.5 rounded-2xl bg-red-500/10 text-red-500 text-[10px] font-black uppercase tracking-widest border border-red-500/10 shadow-inner">
                            {issue}
                         </span>
                       )) : (
-                        <span className="text-[10px] text-slate-800 uppercase tracking-widest pl-1 italic">None Identified ✓</span>
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-widest pl-1 italic opacity-40">None Identified ✓</span>
                       )}
                    </div>
                 </div>
@@ -302,14 +302,14 @@ const CustomerDashboard = () => {
                    </div>
                    <h4 className="text-xl font-black italic tracking-tighter text-foreground uppercase italic">Registry Contribution</h4>
                 </div>
-                <p className="text-sm font-bold text-slate-400 mb-6 max-w-lg leading-relaxed uppercase tracking-tight italic">
+                <p className="text-sm font-bold text-muted-foreground mb-6 max-w-lg leading-relaxed uppercase tracking-tight italic opacity-80">
                    "Your verified handshakes empower informal workers to access official credit facilities and government benefits. You've verified <span className="text-orange-500 font-black">{verifications.length} units</span> so far."
                 </p>
                 <div className="flex gap-4">
-                   <div className="px-5 py-3 rounded-2xl bg-white/5 border border-border text-[9px] font-black text-foreground hover:bg-white/10 transition-all cursor-help uppercase tracking-widest">
+                   <div className="px-5 py-3 rounded-2xl bg-secondary/50 border border-border text-[9px] font-black text-foreground hover:bg-secondary/80 transition-all cursor-help uppercase tracking-widest">
                       Credit Enablement: Active
                    </div>
-                   <div className="px-5 py-3 rounded-2xl bg-white/5 border border-border text-[9px] font-black text-foreground hover:bg-white/10 transition-all cursor-help uppercase tracking-widest">
+                   <div className="px-5 py-3 rounded-2xl bg-secondary/50 border border-border text-[9px] font-black text-foreground hover:bg-secondary/80 transition-all cursor-help uppercase tracking-widest">
                       Benefit Eligibility: Tier 1
                    </div>
                 </div>
@@ -319,7 +319,7 @@ const CustomerDashboard = () => {
           {/* Historical Log */}
           <div className="rounded-[2.5rem] bg-card p-8 border border-border">
              <div className="flex items-center justify-between mb-8">
-                <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 flex items-center gap-3 italic">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground flex items-center gap-3 italic opacity-60">
                    <History size={16} /> 02. Historical Telemetry
                 </h4>
                 <button onClick={() => navigate("/activity")} className="text-[8px] font-black text-orange-500 uppercase tracking-[0.4em] hover:text-foreground transition-all underline underline-offset-4">Expand All</button>
@@ -327,14 +327,14 @@ const CustomerDashboard = () => {
              
              <div className="space-y-4">
                 {verifications.length > 0 ? verifications.slice(0, 3).map((v) => (
-                  <div key={v.id} className="flex items-center justify-between p-6 rounded-[2rem] bg-white/5 border border-border group hover:border-orange-500/20 transition-all font-black italic">
+                  <div key={v.id} className="flex items-center justify-between p-6 rounded-[2rem] bg-secondary/30 border border-border group hover:border-orange-500/20 transition-all font-black italic">
                      <div className="flex items-center gap-6">
-                        <div className="h-14 w-14 rounded-2xl bg-slate-900 border border-border flex items-center justify-center text-xl text-orange-400">
+                        <div className="h-14 w-14 rounded-2xl bg-secondary border border-border flex items-center justify-center text-xl text-orange-400">
                            {v.workerName?.charAt(0) || "W"}
                         </div>
                         <div className="text-left">
                            <div className="text-lg text-foreground tracking-tighter uppercase">{v.workerName || "Worker"}</div>
-                           <div className="text-[9px] text-slate-600 uppercase tracking-widest mt-1">
+                           <div className="text-[9px] text-muted-foreground uppercase tracking-widest mt-1 opacity-60">
                               {v.service} • {v.timestamp instanceof Date ? v.timestamp.toLocaleDateString() : "Just now"}
                            </div>
                         </div>
@@ -342,7 +342,7 @@ const CustomerDashboard = () => {
                      <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1">
                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} size={10} className={i < v.rating ? "text-orange-500 fill-orange-500" : "text-slate-800"} />
+                              <Star key={i} size={10} className={i < v.rating ? "text-orange-500 fill-orange-500" : "text-muted-foreground/30"} />
                            ))}
                         </div>
                         <CheckCircle2 size={18} className="text-emerald-500 opacity-50" />
@@ -350,8 +350,8 @@ const CustomerDashboard = () => {
                   </div>
                 )) : (
                   <div className="py-20 text-center border border-dashed border-border rounded-[2rem]">
-                     <History size={40} className="mx-auto text-slate-800 mb-4 opacity-50" />
-                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest">Historical Registry Pending</p>
+                     <History size={40} className="mx-auto text-muted-foreground mb-4 opacity-20" />
+                     <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-40">Historical Registry Pending</p>
                   </div>
                 )}
              </div>

@@ -28,6 +28,7 @@ import { db } from "@/lib/firebase";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/hooks/useTheme";
 import { cn } from "@/lib/utils";
 
 const API_BASE_URL = "http://localhost:5000";
@@ -37,6 +38,7 @@ const API_BASE_URL = "http://localhost:5000";
 const AdminOverview = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
+  const { isDark } = useTheme();
   
   const [stats, setStats] = useState({
     totalWorkers: 0,
@@ -277,8 +279,8 @@ const AdminOverview = () => {
   return (
     <div className="space-y-8 pb-12">
       <div className="flex flex-col gap-1">
-        <h1 className="text-4xl font-black text-white italic tracking-tighter uppercase">{t("system_overview")}</h1>
-        <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Real-time registry monitoring & deep analytics active</p>
+        <h1 className="text-4xl font-black text-foreground italic tracking-tighter uppercase">{t("system_overview")}</h1>
+        <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px]">Real-time registry monitoring & deep analytics active</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-6">
@@ -299,18 +301,18 @@ const AdminOverview = () => {
             </div>
             <div className="space-y-0.5 sm:space-y-1">
               <div className="text-xl sm:text-3xl font-black text-foreground tracking-tighter">{card.value}</div>
-              <div className="text-[8px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">{card.label}</div>
+              <div className="text-[8px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest truncate">{card.label}</div>
             </div>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 rounded-[3.5rem] bg-slate-900 border border-white/5 p-10 shadow-2xl relative overflow-hidden">
+        <div className="lg:col-span-2 rounded-[3.5rem] bg-card border border-border p-10 shadow-2xl relative overflow-hidden">
           <div className="flex justify-between items-center mb-10">
             <div className="space-y-1">
-              <h3 className="text-xl font-black text-white italic tracking-tight uppercase">Verification Velocity</h3>
-              <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">7-day transaction frequency tracking</p>
+              <h3 className="text-xl font-black text-foreground italic tracking-tight uppercase">Verification Velocity</h3>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">7-day transaction frequency tracking</p>
             </div>
           </div>
 
@@ -323,10 +325,20 @@ const AdminOverview = () => {
                     <stop offset="95%" stopColor="#f97316" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                <XAxis dataKey="name" stroke="#475569" fontSize={10} fontWeight="bold" axisLine={false} tickLine={false} tickMargin={10} />
-                <YAxis stroke="#475569" fontSize={10} fontWeight="bold" axisLine={false} tickLine={false} tickMargin={10} />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #ffffff10', borderRadius: '1.5rem', fontSize: '12px', fontWeight: 'bold' }} itemStyle={{ color: '#f8fafc' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#ffffff05" : "#00000005"} vertical={false} />
+                <XAxis dataKey="name" stroke={isDark ? "#475569" : "#94a3b8"} fontSize={10} fontWeight="bold" axisLine={false} tickLine={false} tickMargin={10} />
+                <YAxis stroke={isDark ? "#475569" : "#94a3b8"} fontSize={10} fontWeight="bold" axisLine={false} tickLine={false} tickMargin={10} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: isDark ? '#0f172a' : '#ffffff', 
+                    border: isDark ? '1px solid #ffffff10' : '1px solid #e2e8f0', 
+                    borderRadius: '1.5rem', 
+                    fontSize: '12px', 
+                    fontWeight: 'bold',
+                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+                  }} 
+                  itemStyle={{ color: isDark ? '#f8fafc' : '#0f172a' }} 
+                />
                 <Area type="monotone" dataKey="reviews" stroke="#f97316" strokeWidth={4} fillOpacity={1} fill="url(#colorReviews)" />
               </AreaChart>
             </ResponsiveContainer>
@@ -334,19 +346,19 @@ const AdminOverview = () => {
         </div>
 
         <div className="space-y-8">
-          <div className="rounded-[3.5rem] bg-slate-900 border border-white/5 p-10 shadow-2xl flex flex-col">
+          <div className="rounded-[3.5rem] bg-card border border-border p-10 shadow-2xl flex flex-col">
             <div className="mb-10">
-              <h3 className="text-xl font-black text-white italic tracking-tight uppercase">Skill Hotspots</h3>
-              <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Growth by profession</p>
+              <h3 className="text-xl font-black text-foreground italic tracking-tight uppercase">Skill Hotspots</h3>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Growth by profession</p>
             </div>
             <div className="flex-1 space-y-6">
               {displaySkillData.map((item, i) => (
                 <div key={i} className="space-y-2">
                   <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
-                    <span className="text-white">{item.name}</span>
-                    <span className="text-slate-500">{item.count} Workers</span>
+                    <span className="text-foreground">{item.name}</span>
+                    <span className="text-muted-foreground">{item.count} Workers</span>
                   </div>
-                  <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                     <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, (item.count / 50) * 100)}%`, backgroundColor: item.color, boxShadow: `0 0 10px ${item.color}50` }} />
                   </div>
                 </div>
@@ -354,30 +366,30 @@ const AdminOverview = () => {
             </div>
           </div>
 
-          <div className="rounded-[3.5rem] bg-slate-900 border border-red-500/10 p-10 shadow-2xl">
+          <div className="rounded-[3.5rem] bg-card border border-border p-10 shadow-2xl">
             <div className="mb-8 flex items-center gap-4">
               <div className="p-3 rounded-2xl bg-red-500/10 text-red-500">
                 <Shield size={20} />
               </div>
               <div>
-                <h3 className="text-lg font-black text-white italic uppercase tracking-tight">Maintenance</h3>
-                <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Critical system operations</p>
+                <h3 className="text-lg font-black text-foreground italic uppercase tracking-tight">Maintenance</h3>
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Critical system operations</p>
               </div>
             </div>
             <div className="space-y-4">
-              <button onClick={() => handleGlobalReset()} className="w-full flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-red-500/10 hover:border-red-500/20 group transition-all">
+              <button onClick={() => handleGlobalReset()} className="w-full flex items-center justify-between p-4 rounded-2xl bg-secondary border border-border hover:bg-red-500/10 hover:border-red-500/20 group transition-all">
                 <div className="flex items-center gap-3">
-                  <RotateCcw size={16} className="text-slate-500 group-hover:text-red-500" />
-                  <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Reset All Verification</span>
+                  <RotateCcw size={16} className="text-muted-foreground group-hover:text-red-500" />
+                  <span className="text-[10px] font-black text-foreground uppercase tracking-widest">Reset All Verification</span>
                 </div>
-                <ArrowUpRight size={14} className="text-slate-700 group-hover:text-red-500" />
+                <ArrowUpRight size={14} className="text-muted-foreground group-hover:text-red-500" />
               </button>
-              <button onClick={handlePurgeRequests} className="w-full flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-red-500/10 hover:border-red-500/20 group transition-all">
+              <button onClick={handlePurgeRequests} className="w-full flex items-center justify-between p-4 rounded-2xl bg-secondary border border-border hover:bg-red-500/10 hover:border-red-500/20 group transition-all">
                 <div className="flex items-center gap-3">
-                  <Trash2 size={16} className="text-slate-500 group-hover:text-red-500" />
-                  <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Purge Request Queue</span>
+                  <Trash2 size={16} className="text-muted-foreground group-hover:text-red-500" />
+                  <span className="text-[10px] font-black text-foreground uppercase tracking-widest">Purge Request Queue</span>
                 </div>
-                <ArrowUpRight size={14} className="text-slate-700 group-hover:text-red-500" />
+                <ArrowUpRight size={14} className="text-muted-foreground group-hover:text-red-500" />
               </button>
             </div>
           </div>

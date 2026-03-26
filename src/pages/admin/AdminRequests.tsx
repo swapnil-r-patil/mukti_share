@@ -193,8 +193,8 @@ const AdminRequests = () => {
     <div className="space-y-8 pb-12 animate-in fade-in duration-700">
       <div className="flex justify-between items-end">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black text-white italic tracking-tighter uppercase">Verification Requests</h1>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Manage manual worker identity & report access approval</p>
+          <h1 className="text-4xl font-black text-foreground italic tracking-tighter uppercase">Verification Requests</h1>
+          <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px]">Manage manual worker identity & report access approval</p>
         </div>
         <button 
           onClick={handleClearAll}
@@ -205,34 +205,34 @@ const AdminRequests = () => {
       </div>
 
       {loading ? (
-        <div className="bg-slate-900 rounded-[3rem] border border-white/5 p-20 flex flex-col items-center justify-center gap-4">
+        <div className="bg-card rounded-[3rem] border border-border p-20 flex flex-col items-center justify-center gap-4 shadow-xl">
            <div className="h-10 w-10 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
-           <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Scanning Request Queue...</p>
+           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Scanning Request Queue...</p>
         </div>
       ) : requests.length === 0 ? (
-        <div className="bg-slate-900 rounded-[3rem] border border-white/5 p-20 flex flex-col items-center justify-center text-center space-y-4">
-           <div className="h-16 w-16 rounded-3xl bg-white/5 flex items-center justify-center text-slate-700">
+        <div className="bg-card rounded-[3rem] border border-border p-20 flex flex-col items-center justify-center text-center space-y-4 shadow-xl">
+           <div className="h-16 w-16 rounded-3xl bg-secondary flex items-center justify-center text-muted-foreground/30">
               <CheckCircle2 size={32} />
            </div>
            <div className="space-y-1">
-              <h3 className="text-xl font-black text-white italic tracking-tighter uppercase">All Caught Up!</h3>
-              <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">No pending verification requests at the moment.</p>
+              <h3 className="text-xl font-black text-foreground italic tracking-tighter uppercase">All Caught Up!</h3>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">No pending verification requests at the moment.</p>
            </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {requests.map((req) => (
-            <div key={req.id} className="group relative bg-slate-900 rounded-[2.5rem] border border-white/5 p-8 hover:border-orange-500/30 transition-all shadow-2xl overflow-hidden font-black italic">
+            <div key={req.id} className="group relative bg-card rounded-[2.5rem] border border-border p-8 hover:border-orange-500/30 transition-all shadow-2xl overflow-hidden font-black italic">
               <div className="absolute -top-10 -right-10 h-32 w-32 bg-orange-500/5 rounded-full blur-3xl group-hover:bg-orange-500/10 transition-all duration-700" />
               
               <div className="mb-6 flex items-start justify-between relative z-10">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 flex items-center justify-center text-orange-500">
+                  <div className="h-12 w-12 rounded-2xl bg-secondary border border-border flex items-center justify-center text-orange-500 shadow-inner italic">
                     <UserIcon size={22} />
                   </div>
                   <div>
-                    <div className="text-sm font-black text-white uppercase tracking-tight">{req.workerName}</div>
-                    <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest flex items-center gap-1">
+                    <div className="text-sm font-black text-foreground uppercase tracking-tight">{req.workerName}</div>
+                    <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                       <Clock size={10} /> {req.timestamp.toLocaleDateString()}
                     </div>
                   </div>
@@ -243,27 +243,27 @@ const AdminRequests = () => {
               </div>
 
               <div className="space-y-4 mb-8 relative z-10">
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
-                  <Phone size={14} className="text-slate-500" />
-                  <span className="text-[11px] text-slate-300 font-bold">{req.workerPhone}</span>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary border border-border">
+                  <Phone size={14} className="text-muted-foreground" />
+                  <span className="text-[11px] text-foreground/70 font-bold">{req.workerPhone}</span>
                 </div>
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
-                  <Wrench size={14} className="text-slate-500" />
-                  <span className="text-[11px] text-slate-300 font-bold uppercase tracking-wider">{req.workerSkill}</span>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary border border-border">
+                  <Wrench size={14} className="text-muted-foreground" />
+                  <span className="text-[11px] text-foreground/70 font-bold uppercase tracking-wider">{req.workerSkill}</span>
                 </div>
               </div>
 
               <div className="space-y-3 relative z-10">
                 <button
                   onClick={() => navigate(`/admin/worker/${req.workerId}`)}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 text-slate-300 border border-white/10 hover:bg-orange-500/10 hover:text-orange-400 hover:border-orange-500/20 transition-all"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-secondary text-foreground/80 border border-border hover:bg-orange-500/10 hover:text-orange-400 hover:border-orange-500/20 transition-all active:scale-95"
                 >
                   <Eye size={15} /> <span className="text-[10px] uppercase tracking-widest font-black">View Profile</span>
                 </button>
                 <div className="grid grid-cols-2 gap-3">
                   <button 
                     onClick={() => setRejectTarget({ id: req.id, workerId: req.workerId, source: req.source, name: req.workerName })}
-                    className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 text-slate-500 border border-white/5 hover:bg-red-500/10 hover:text-red-500 transition-all"
+                    className="flex items-center justify-center gap-2 py-3 rounded-xl bg-secondary text-muted-foreground border border-border hover:bg-red-500/10 hover:text-red-500 transition-all active:scale-95"
                   >
                     <XCircle size={16} /> <span className="text-[10px] uppercase tracking-widest">Reject</span>
                   </button>
@@ -287,10 +287,10 @@ const AdminRequests = () => {
 
       {/* Rejection Reason Modal */}
       {rejectTarget && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-xl animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-slate-950 rounded-[2.5rem] border border-red-500/20 p-8 shadow-2xl animate-fade-up">
-            <h3 className="text-xl font-black text-white italic tracking-tighter uppercase mb-2">Reject {rejectTarget.name}</h3>
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-6">This reason will be shown to the worker</p>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-background/50 backdrop-blur-xl animate-in fade-in duration-300">
+          <div className="w-full max-w-md bg-card rounded-[2.5rem] border border-red-500/20 p-8 shadow-2xl animate-fade-up">
+            <h3 className="text-xl font-black text-foreground italic tracking-tighter uppercase mb-2">Reject {rejectTarget.name}</h3>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-6">This reason will be shown to the worker</p>
             
             <div className="space-y-3 mb-6">
               {['Incomplete documents', 'Blurry photo / Low quality', 'Unverifiable identity', 'Suspicious activity detected', 'Duplicate account'].map(r => (
@@ -298,7 +298,7 @@ const AdminRequests = () => {
                   key={r}
                   onClick={() => setRejectReason(r)}
                   className={`w-full text-left px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all border ${
-                    rejectReason === r ? 'bg-red-500/10 border-red-500/30 text-red-500' : 'bg-white/5 border-white/5 text-slate-400 hover:text-white'
+                    rejectReason === r ? 'bg-red-500/10 border-red-500/30 text-red-500' : 'bg-secondary border-border text-muted-foreground hover:text-foreground'
                   }`}
                 >{r}</button>
               ))}
@@ -309,18 +309,18 @@ const AdminRequests = () => {
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Or type a custom reason..."
               rows={2}
-              className="w-full rounded-xl bg-slate-900 border border-white/10 p-4 text-sm text-white font-bold outline-none focus:border-red-500 transition-all resize-none mb-6"
+              className="w-full rounded-xl bg-secondary border border-border p-4 text-sm text-foreground font-bold outline-none focus:border-red-500 transition-all resize-none mb-6 placeholder:text-muted-foreground/30 shadow-inner"
             />
 
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => { setRejectTarget(null); setRejectReason(""); }}
-                className="py-3 rounded-xl bg-white/5 text-slate-500 border border-white/5 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all"
+                className="py-3 rounded-xl bg-secondary text-muted-foreground border border-border text-[10px] font-black uppercase tracking-widest hover:text-foreground hover:border-foreground/30 transition-all active:scale-95"
               >Cancel</button>
               <button
                 onClick={() => handleAction(rejectTarget.id, rejectTarget.workerId, "reject", rejectTarget.source, rejectReason)}
                 disabled={!rejectReason}
-                className="py-3 rounded-xl bg-red-500 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all disabled:opacity-30"
+                className="py-3 rounded-xl bg-red-500 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all disabled:opacity-30 active:scale-95"
               >Confirm Rejection</button>
             </div>
           </div>

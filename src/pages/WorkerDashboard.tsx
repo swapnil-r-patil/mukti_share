@@ -703,7 +703,7 @@ const WorkerDashboard = () => {
                     </div>
                   </div>
             </h2>
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mt-2 pl-1 italic">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em] mt-2 pl-1 italic">
               {Number(user.workerType) === 0 ? "CENTRAL REGISTRY ACCESS GRANTED" : "TACTICAL WORK OVERVIEW ACTIVE"}
             </p>
           </div>
@@ -737,8 +737,8 @@ const WorkerDashboard = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 mb-8 relative z-10 opacity-0 animate-fade-up" style={{ animationDelay: "60ms" }}>
         {(isApproved || user.isVerifiedByAdmin) && (
           <button
-            onClick={() => {
-              generateCreditReport({
+            onClick={async () => {
+              await generateCreditReport({
                 workerName: user.name,
                 phone: user.phone,
                 skill: user.skill || 'General',
@@ -757,7 +757,7 @@ const WorkerDashboard = () => {
                 repeatCustomers: displayData?.summary?.repeatCustomers || 0,
                 topSkills: displayData?.performance?.topSkills || [user.skill || 'General'],
                 workerId: user.id,
-                recentJobs: verifications.slice(0, 7).map((v: any) => ({
+                recentJobs: verifications.slice(0, 4).map((v: any) => ({
                   date: v.timestamp instanceof Date ? v.timestamp.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : 'Recent',
                   category: v.workerSkill || v.service || user.skill || 'Service',
                   rating: v.rating || 4,
@@ -769,7 +769,7 @@ const WorkerDashboard = () => {
             className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-card border border-border hover:border-orange-500/30 transition-all group"
           >
             <Lock size={18} className="text-orange-500 group-hover:scale-110 transition-transform" />
-            <span className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest text-center">PDF Report</span>
+            <span className="text-[7px] sm:text-[8px] font-black text-muted-foreground uppercase tracking-widest text-center">PDF Report</span>
           </button>
         )}
         <button
@@ -780,14 +780,14 @@ const WorkerDashboard = () => {
           className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-card border border-border hover:border-emerald-500/30 transition-all group"
         >
           <MessageSquare size={18} className="text-emerald-500 group-hover:scale-110 transition-transform" />
-          <span className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest text-center">WhatsApp</span>
+          <span className="text-[7px] sm:text-[8px] font-black text-muted-foreground uppercase tracking-widest text-center">WhatsApp</span>
         </button>
         <button
           onClick={() => navigate('/schemes')}
           className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-card border border-border hover:border-blue-500/30 transition-all group"
         >
           <Briefcase size={20} className="text-blue-500 group-hover:scale-110 transition-transform" />
-          <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Schemes</span>
+          <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Schemes</span>
         </button>
         <button
           onClick={() => {
@@ -798,7 +798,7 @@ const WorkerDashboard = () => {
           className="relative flex flex-col items-center gap-2 p-4 rounded-2xl bg-card border border-border hover:border-purple-500/30 transition-all group"
         >
           <MapPin size={20} className="text-purple-500 group-hover:scale-110 transition-transform" />
-          <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Jobs</span>
+          <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Jobs</span>
           {activeRequests.filter(r => r.status === 'Searching').length > 0 && (
             <span className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center rounded-full bg-orange-500 text-white text-[8px] font-black animate-pulse shadow-lg shadow-orange-500/40">
               {activeRequests.filter(r => r.status === 'Searching').length}
@@ -810,14 +810,14 @@ const WorkerDashboard = () => {
           className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-card border border-border hover:border-yellow-500/30 transition-all group"
         >
           <Star size={18} className="text-yellow-500 group-hover:scale-110 transition-transform" />
-          <span className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest text-center">Rank</span>
+          <span className="text-[7px] sm:text-[8px] font-black text-muted-foreground uppercase tracking-widest text-center">Rank</span>
         </button>
         <button
           onClick={() => navigate('/impact')}
           className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-card border border-border hover:border-pink-500/30 transition-all group"
         >
           <TrendingUp size={18} className="text-pink-500 group-hover:scale-110 transition-transform" />
-          <span className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest text-center">Impact</span>
+          <span className="text-[7px] sm:text-[8px] font-black text-muted-foreground uppercase tracking-widest text-center">Impact</span>
         </button>
       </div>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
@@ -828,11 +828,11 @@ const WorkerDashboard = () => {
           {/* Work Mode Indicator */}
           <div className="rounded-[2rem] bg-card p-5 border border-border flex items-center justify-between opacity-0 animate-fade-up group hover:border-orange-500/30 transition-all font-black italic" style={{ animationDelay: "50ms" }}>
             <div className="flex items-center gap-4">
-              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center border transition-all ${isRegularWorker ? "bg-orange-500/10 text-orange-500 border-orange-500/10" : "bg-white/5 text-slate-400 border-border"}`}>
+              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center border transition-all ${isRegularWorker ? "bg-orange-500/10 text-orange-500 border-orange-500/10" : "bg-secondary/50 text-muted-foreground border-border"}`}>
                 {isRegularWorker ? <Briefcase size={22} /> : <LucideUser size={22} />}
               </div>
               <div className="text-left">
-                <div className="text-[9px] font-black uppercase text-slate-600 tracking-[0.2em] leading-none mb-1">Worker Segment</div>
+                <div className="text-[9px] font-black uppercase text-muted-foreground tracking-[0.2em] leading-none mb-1 opacity-60">Worker Segment</div>
                 <div className="text-sm font-black text-foreground italic tracking-tighter uppercase">{isRegularWorker ? "REGULAR" : "ONE-TIME"}</div>
               </div>
             </div>
@@ -860,12 +860,12 @@ const WorkerDashboard = () => {
                </div>
                
                <div className="space-y-4 relative z-10">
-                  <div className="p-5 rounded-3xl bg-white/5 border border-border shadow-inner">
-                     <div className="text-[8px] font-black text-slate-600 uppercase tracking-[0.4em] mb-2">Prime Contact</div>
+                  <div className="p-5 rounded-3xl bg-secondary/30 border border-border shadow-inner">
+                     <div className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.4em] mb-2 opacity-60">Prime Contact</div>
                      <div className="text-lg font-black text-foreground italic tracking-tighter uppercase">{user.employerName || "UNIT NOT LINKED"}</div>
                   </div>
-                  <div className="p-5 rounded-3xl bg-white/5 border border-border shadow-inner">
-                     <div className="text-[8px] font-black text-slate-600 uppercase tracking-[0.4em] mb-2">Secure Link</div>
+                  <div className="p-5 rounded-3xl bg-secondary/30 border border-border shadow-inner">
+                     <div className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.4em] mb-2 opacity-60">Secure Link</div>
                      <div className="text-lg font-black text-foreground/70 tracking-[0.2em] italic">+91 {user.employerPhone || "XXXXXXXXXX"}</div>
                   </div>
                </div>
@@ -895,7 +895,7 @@ const WorkerDashboard = () => {
               </div>
               <div className="text-left">
                 <span className="block text-lg font-black text-foreground tracking-tighter uppercase">{t('generateQR')}</span>
-                <span className="block text-[9px] font-black uppercase text-slate-600 tracking-[0.2em] mt-1">Deploy Handshake Token</span>
+                <span className="block text-[9px] font-black uppercase text-muted-foreground tracking-[0.2em] mt-1 opacity-60">Deploy Handshake Token</span>
               </div>
             </button>
           )}
@@ -919,14 +919,14 @@ const WorkerDashboard = () => {
             {/* Trust & Fraud */}
             <div className="rounded-[2rem] bg-card p-6 border border-border shadow-inner font-black italic">
                <div className="flex items-center justify-between mb-5 border-b border-border pb-4">
-                  <div className="text-[9px] font-black uppercase text-slate-600 tracking-[0.3em] flex items-center gap-3">
+                  <div className="text-[9px] font-black uppercase text-muted-foreground tracking-[0.3em] flex items-center gap-3 opacity-60">
                     <Star size={16} className="text-orange-500 fill-orange-500" /> Mukti Index
                   </div>
                   <div className="text-3xl font-black text-orange-500 tracking-tighter">{Math.round(muktiScore)}</div>
                </div>
                <div className="flex items-center justify-between">
-                  <div className="text-[9px] font-black uppercase text-slate-600 tracking-[0.3em] flex items-center gap-3">
-                    <ShieldCheck size={16} className="text-slate-700" /> System Integrity
+                  <div className="text-[9px] font-black uppercase text-muted-foreground tracking-[0.3em] flex items-center gap-3 opacity-60">
+                    <ShieldCheck size={16} className="text-muted-foreground" /> System Integrity
                   </div>
                   <div className={`text-xs font-black tracking-widest ${
                     displayData?.trust?.fraudRisk === 'LOW' ? 'text-emerald-500' : 
@@ -979,7 +979,7 @@ const WorkerDashboard = () => {
                 </div>
                 <button 
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl text-[10px] font-black tracking-[0.2em] uppercase transition-all border ${showFilters ? "bg-orange-500 border-orange-500 text-foreground shadow-xl shadow-orange-500/20" : "bg-white/5 border-border text-slate-400 hover:text-foreground"}`}
+                  className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl text-[10px] font-black tracking-[0.2em] uppercase transition-all border ${showFilters ? "bg-orange-500 border-orange-500 text-foreground shadow-xl shadow-orange-500/20" : "bg-secondary text-muted-foreground border-border hover:text-foreground"}`}
                 >
                   <Search size={14} />
                   {showFilters ? "CLOSE FILTERS" : "OPEN SCANNER"}
@@ -988,9 +988,9 @@ const WorkerDashboard = () => {
 
               {/* Filter Bar */}
               {showFilters && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 p-6 rounded-3xl bg-white/5 border border-border backdrop-blur-2xl animate-in slide-in-from-top-4 duration-500">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 p-6 rounded-3xl bg-secondary/50 border border-border backdrop-blur-2xl animate-in slide-in-from-top-4 duration-500">
                   <div className="space-y-2">
-                     <label className="text-[9px] font-black uppercase text-slate-500 tracking-[0.3em] pl-1 italic">Proximity</label>
+                     <label className="text-[9px] font-black uppercase text-muted-foreground tracking-[0.3em] pl-1 italic opacity-60">Proximity</label>
                      <select 
                        value={distanceFilter}
                        onChange={(e) => setDistanceFilter(e.target.value)}

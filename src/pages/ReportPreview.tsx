@@ -312,11 +312,11 @@ const ReportPreview = () => {
             </div>
 
             <button
-              onClick={() => {
+              onClick={async () => {
                 if (user.isVerifiedByAdmin || isApproved || isDemoWorker) {
                   const incomeMin = finStats.incomeRange.min;
                   const incomeMax = finStats.incomeRange.max;
-                  generateCreditReport({
+                  await generateCreditReport({
                     workerName: user.name,
                     phone: user.phone,
                     skill: user.skill || 'General',
@@ -335,7 +335,7 @@ const ReportPreview = () => {
                     repeatCustomers,
                     topSkills: [user.skill || 'General'],
                     workerId: user.id,
-                    recentJobs: verifications.slice(0, 7).map((v: any) => ({
+                    recentJobs: verifications.slice(0, 4).map((v: any) => ({
                       date: v.timestamp instanceof Date ? v.timestamp.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : 'Recent',
                       category: v.workerSkill || v.service || user.skill || 'Service',
                       rating: v.rating || 4,

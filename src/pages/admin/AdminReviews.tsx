@@ -56,40 +56,40 @@ const AdminReviews = () => {
     <div className="space-y-8 pb-12">
       <div className="flex justify-between items-end">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black text-white italic tracking-tighter uppercase">{t("admin_sidebar_reviews")}</h1>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">NLP-enriched content moderation & quality control</p>
+          <h1 className="text-4xl font-black text-foreground italic tracking-tighter uppercase">{t("admin_sidebar_reviews")}</h1>
+          <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px]">NLP-enriched content moderation & quality control</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6">
         {loading ? (
-          <div className="py-20 text-center animate-pulse text-slate-600 font-black uppercase tracking-widest text-xs">
+          <div className="py-20 text-center animate-pulse text-muted-foreground font-black uppercase tracking-widest text-xs">
             Synthesizing NLP Insights...
           </div>
         ) : reviews.map((review) => {
           const nlp = review.nlp || analyzeReview(review.comment || "");
           
           return (
-            <div key={review.id} className="group rounded-[3rem] bg-slate-900 border border-white/5 p-8 hover:border-white/10 transition-all shadow-2xl relative overflow-hidden">
-               <div className="flex flex-col lg:flex-row gap-8">
+            <div key={review.id} className="group rounded-[3rem] bg-card border border-border p-8 hover:border-orange-500/20 transition-all shadow-2xl relative overflow-hidden">
+                <div className="flex flex-col lg:flex-row gap-8">
                   {/* User Info */}
                   <div className="lg:w-64 space-y-4">
                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center font-black text-slate-400 uppercase">
+                        <div className="h-10 w-10 rounded-xl bg-secondary border border-border flex items-center justify-center font-black text-muted-foreground uppercase italic shadow-sm">
                            {review.workerName?.[0] || 'W'}
                         </div>
                         <div className="min-w-0">
-                           <div className="text-sm font-black text-white truncate italic tracking-tight">{review.workerName || "Worker"}</div>
-                           <div className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">{review.workerSkill || "Service"}</div>
+                           <div className="text-sm font-black text-foreground truncate italic tracking-tight">{review.workerName || "Worker"}</div>
+                           <div className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{review.workerSkill || "Service"}</div>
                         </div>
                      </div>
-                     <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-                        <div className="h-10 w-10 bg-slate-950 rounded-full flex items-center justify-center font-black text-slate-600 text-[10px] border border-white/5">
+                     <div className="flex items-center gap-3 pt-4 border-t border-border">
+                        <div className="h-10 w-10 bg-secondary rounded-full flex items-center justify-center font-black text-muted-foreground text-[10px] border border-border shadow-inner">
                            C
                         </div>
                         <div className="min-w-0">
-                           <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Customer ID</div>
-                           <div className="text-[10px] font-bold text-slate-600 truncate">{review.customerId?.slice(0, 12)}...</div>
+                           <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Customer ID</div>
+                           <div className="text-[10px] font-bold text-foreground/60 truncate">{review.customerId?.slice(0, 12)}...</div>
                         </div>
                      </div>
                   </div>
@@ -99,11 +99,11 @@ const AdminReviews = () => {
                      <div className="space-y-4">
                         <div className="flex items-center gap-2">
                            {[...Array(5)].map((_, i) => (
-                             <Star key={i} size={14} className={i < review.rating ? "text-orange-500 fill-orange-500" : "text-slate-800"} />
+                             <Star key={i} size={14} className={i < review.rating ? "text-orange-500 fill-orange-500" : "text-secondary"} />
                            ))}
-                           <span className="ml-4 text-[10px] font-black text-slate-700 uppercase tracking-widest">Captured {new Date(review.timestamp?.seconds * 1000).toLocaleDateString()}</span>
+                           <span className="ml-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest italic opacity-60">Captured {new Date(review.timestamp?.seconds * 1000).toLocaleDateString()}</span>
                         </div>
-                        <p className="text-white text-base font-medium leading-relaxed italic">"{review.comment}"</p>
+                        <p className="text-foreground text-base font-medium leading-relaxed italic">"{review.comment}"</p>
                      </div>
 
                      {/* NLP Insights Bar */}
@@ -131,21 +131,21 @@ const AdminReviews = () => {
                   </div>
 
                   {/* Actions */}
-                  <div className="lg:w-48 flex flex-col gap-3 justify-end pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-white/5 lg:pl-8">
-                     <button onClick={() => handleModerate(review.id, "approved")} className="h-12 w-full rounded-xl bg-emerald-500/10 text-emerald-500 font-black text-[10px] uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all border border-emerald-500/20">
+                  <div className="lg:w-48 flex flex-col gap-3 justify-end pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-border lg:pl-8">
+                     <button onClick={() => handleModerate(review.id, "approved")} className="h-12 w-full rounded-xl bg-emerald-500/10 text-emerald-500 font-black text-[10px] uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all border border-emerald-500/20 active:scale-95">
                         Approve
                      </button>
                      <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => handleModerate(review.id, "flagged")} className="h-12 rounded-xl border border-white/5 text-slate-500 hover:text-orange-500 hover:bg-orange-500/10 transition-all flex items-center justify-center">
+                        <button onClick={() => handleModerate(review.id, "flagged")} className="h-12 rounded-xl border border-border text-muted-foreground hover:text-orange-500 hover:bg-orange-500/10 transition-all flex items-center justify-center active:scale-95">
                            <Flag size={18} />
                         </button>
-                        <button onClick={() => handleDelete(review.id)} className="h-12 rounded-xl border border-white/5 text-slate-500 hover:text-red-500 hover:bg-red-500/10 transition-all flex items-center justify-center">
+                        <button onClick={() => handleDelete(review.id)} className="h-12 rounded-xl border border-border text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-all flex items-center justify-center active:scale-95">
                            <Trash2 size={18} />
                         </button>
                      </div>
                   </div>
-               </div>
-            </div>
+                </div>
+              </div>
           );
         })}
       </div>

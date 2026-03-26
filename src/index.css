@@ -6,19 +6,19 @@
 
 @layer base {
   :root {
-    --background: 210 33% 99%; /* Very subtle off-white */
+    --background: 210 15% 95%; /* Muted light slate */
     --foreground: 224 71% 4%;
 
-    --card: 0 0% 100%;
+    --card: 0 0% 98%;
     --card-foreground: 224 71% 4%;
 
-    --popover: 0 0% 100%;
+    --popover: 0 0% 98%;
     --popover-foreground: 224 71% 4%;
 
     --primary: 24.6 95% 53.1%; /* Premium Orange */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 210 20% 90%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;

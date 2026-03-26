@@ -189,7 +189,7 @@ const AdminWorkerDetail = () => {
     return (
       <div className="flex h-[60vh] items-center justify-center flex-col gap-4">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
-        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
           Loading Worker Profile...
         </p>
       </div>
@@ -201,10 +201,10 @@ const AdminWorkerDetail = () => {
       <div className="flex h-[60vh] items-center justify-center flex-col gap-6 text-center">
         <AlertTriangle size={48} className="text-red-500" />
         <div>
-          <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">
+          <h2 className="text-2xl font-black text-foreground italic uppercase tracking-tighter">
             Worker Not Found
           </h2>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             No data found for worker ID: {workerId}
           </p>
         </div>
@@ -247,15 +247,15 @@ const AdminWorkerDetail = () => {
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="h-11 w-11 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+            className="h-11 w-11 flex items-center justify-center rounded-2xl bg-secondary border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-all shadow-sm active:scale-95"
           >
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-3xl font-black text-white italic tracking-tighter uppercase">
+            <h1 className="text-3xl font-black text-foreground italic tracking-tighter uppercase">
               Worker Profile
             </h1>
-            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">
+            <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
               Full identity & history review for admin
             </p>
           </div>
@@ -279,7 +279,7 @@ const AdminWorkerDetail = () => {
         {/* ── Left Column ── */}
         <div className="lg:col-span-4 flex flex-col gap-6">
           {/* Avatar Card */}
-          <div className="relative rounded-[2.5rem] bg-slate-900 border border-white/5 p-10 flex flex-col items-center text-center overflow-hidden shadow-2xl group">
+          <div className="relative rounded-[2.5rem] bg-card border border-border p-10 flex flex-col items-center text-center overflow-hidden shadow-2xl group">
             <div className="absolute -top-16 -right-16 h-40 w-40 bg-orange-500/5 rounded-full blur-3xl group-hover:bg-orange-500/10 transition-all duration-1000" />
 
             <div className="relative mb-6">
@@ -294,12 +294,12 @@ const AdminWorkerDetail = () => {
                   (worker.name || "?").charAt(0)
                 )}
               </div>
-              <div className="absolute -bottom-2 -right-2 p-2.5 rounded-xl bg-slate-800 border border-orange-500/30 text-orange-500 shadow-xl">
+              <div className="absolute -bottom-2 -right-2 p-2.5 rounded-xl bg-secondary border border-orange-500/30 text-orange-500 shadow-xl italic font-black">
                 <Award size={18} />
               </div>
             </div>
 
-            <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase">
+            <h2 className="text-2xl font-black text-foreground italic tracking-tighter uppercase">
               {worker.name || "Unknown"}
             </h2>
             {worker.skill && (
@@ -329,8 +329,8 @@ const AdminWorkerDetail = () => {
           </div>
 
           {/* Registry Metadata */}
-          <div className="rounded-[2.5rem] bg-slate-900 border border-white/5 shadow-2xl overflow-hidden">
-            <div className="px-8 py-4 border-b border-white/5 bg-white/[0.02] font-black text-[10px] uppercase tracking-[0.3em] text-slate-600">
+          <div className="rounded-[2.5rem] bg-card border border-border shadow-2xl overflow-hidden">
+            <div className="px-8 py-4 border-b border-border bg-secondary/30 font-black text-[10px] uppercase tracking-[0.3em] text-muted-foreground italic">
               Core Registry Metadata
             </div>
             <div className="p-4 space-y-1.5">
@@ -348,16 +348,16 @@ const AdminWorkerDetail = () => {
               ].map((item) => (
                 <div
                   key={item.label}
-                  className="flex items-center gap-4 px-4 py-3.5 rounded-2xl hover:bg-white/5 transition-all group border border-transparent hover:border-white/5"
+                  className="flex items-center gap-4 px-4 py-3.5 rounded-2xl hover:bg-secondary transition-all group border border-transparent hover:border-border italic"
                 >
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500 border border-orange-500/10 shrink-0 group-hover:scale-110 transition-transform">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500 border border-orange-500/10 shrink-0 group-hover:scale-110 transition-transform shadow-inner">
                     <item.icon size={16} />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest leading-none mb-0.5">
+                    <div className="text-[9px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-0.5 opacity-60">
                       {item.label}
                     </div>
-                    <div className="text-xs font-black text-white tracking-tight truncate">
+                    <div className="text-xs font-black text-foreground tracking-tight truncate">
                       {item.value}
                     </div>
                   </div>
@@ -373,8 +373,8 @@ const AdminWorkerDetail = () => {
           {/* ── Professional Metric Dashboard ── */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* 01. ACTIVITY LOG */}
-            <div className="rounded-[2.5rem] bg-slate-900 border border-white/5 p-8 shadow-2xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+            <div className="rounded-[2.5rem] bg-card border border-border p-8 shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                  <History size={40} className="text-orange-500" />
               </div>
               <div className="flex items-center gap-2 mb-6">
@@ -386,25 +386,25 @@ const AdminWorkerDetail = () => {
               
               <div className="flex justify-between items-end">
                 <div className="space-y-1">
-                  <div className="text-4xl font-black text-white italic tracking-tighter">{workerMetrics.income.totalJobs}</div>
-                  <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Units</div>
+                  <div className="text-4xl font-black text-foreground italic tracking-tighter">{workerMetrics.income.totalJobs}</div>
+                  <div className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Units</div>
                 </div>
-                <div className="h-10 w-[1px] bg-white/5" />
+                <div className="h-10 w-[1px] bg-border" />
                 <div className="space-y-1 text-center">
-                  <div className="text-4xl font-black text-white italic tracking-tighter">{workerMetrics.income.activeMonths}</div>
-                  <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Months</div>
+                  <div className="text-4xl font-black text-foreground italic tracking-tighter">{workerMetrics.income.activeMonths}</div>
+                  <div className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Months</div>
                 </div>
-                <div className="h-10 w-[1px] bg-white/5" />
+                <div className="h-10 w-[1px] bg-border" />
                 <div className="space-y-1 text-right">
-                  <div className="text-4xl font-black text-white italic tracking-tighter">{workerMetrics.repeatCount}</div>
-                  <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Repeat</div>
+                  <div className="text-4xl font-black text-foreground italic tracking-tighter">{workerMetrics.repeatCount}</div>
+                  <div className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Repeat</div>
                 </div>
               </div>
             </div>
 
             {/* 02. PRECISION METRICS */}
-            <div className="rounded-[2.5rem] bg-slate-900 border border-white/5 p-8 shadow-2xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+            <div className="rounded-[2.5rem] bg-card border border-border p-8 shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                  <Shield size={40} className="text-orange-500" />
               </div>
               <div className="flex items-center gap-2 mb-6">
@@ -416,25 +416,25 @@ const AdminWorkerDetail = () => {
 
               <div className="flex justify-between items-center">
                 <div className="space-y-2">
-                  <div className="text-4xl font-black text-white italic tracking-tighter">{workerMetrics.avgRating.toFixed(1)}</div>
-                  <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Rating Avg</div>
+                  <div className="text-4xl font-black text-foreground italic tracking-tighter">{workerMetrics.avgRating.toFixed(1)}</div>
+                  <div className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Rating Avg</div>
                 </div>
                 
                 <div className="relative h-16 w-16">
                   <svg className="h-full w-full" viewBox="0 0 36 36">
-                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="3" />
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" className="text-secondary" strokeWidth="3" />
                     <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#f97316" strokeWidth="3" strokeDasharray={`${workerMetrics.trustScore}, 100`} />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-[10px] font-black text-white italic">{workerMetrics.trustScore}</span>
+                    <span className="text-[10px] font-black text-foreground italic">{workerMetrics.trustScore}</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* 03. CAPITAL PROFILE */}
-            <div className="rounded-[2.5rem] bg-slate-900 border border-white/5 p-8 shadow-2xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+            <div className="rounded-[2.5rem] bg-card border border-border p-8 shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                  <TrendingUp size={40} className="text-orange-500" />
               </div>
               <div className="flex items-center gap-2 mb-6">
@@ -446,20 +446,20 @@ const AdminWorkerDetail = () => {
 
               <div className="space-y-4">
                 <div>
-                   <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Escrow Projection</div>
-                   <div className="text-3xl font-black text-white italic tracking-tighter">
+                   <div className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1 italic opacity-60">Escrow Projection</div>
+                   <div className="text-3xl font-black text-foreground italic tracking-tighter">
                       ₹{workerMetrics.income.incomeRange.min} - ₹{workerMetrics.income.incomeRange.max}
                    </div>
                 </div>
-                <div className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em] italic">
+                <div className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.2em] italic">
                    Indexed at ₹{Math.round(workerMetrics.income.perJobIncome)} per unit
                 </div>
               </div>
             </div>
 
             {/* 04. CREDIT ELIGIBILITY */}
-            <div className="rounded-[2.5rem] bg-slate-900 border border-white/5 p-8 shadow-2xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+            <div className="rounded-[2.5rem] bg-card border border-border p-8 shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                  <BadgeCheck size={40} className="text-orange-500" />
               </div>
               <div className="flex items-center gap-2 mb-6">
@@ -471,11 +471,11 @@ const AdminWorkerDetail = () => {
 
               <div className="flex justify-between items-end">
                 <div className="space-y-1">
-                   <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Optimal EMI</div>
-                   <div className="text-2xl font-black text-white italic tracking-tighter">₹{Math.round(workerMetrics.income.safeEMI)}/mo</div>
+                   <div className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-60 italic">Optimal EMI</div>
+                   <div className="text-2xl font-black text-foreground italic tracking-tighter">₹{Math.round(workerMetrics.income.safeEMI)}/mo</div>
                 </div>
                 <div className="text-right space-y-1">
-                   <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Facility Range</div>
+                   <div className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-60 italic">Facility Range</div>
                    <div className="text-2xl font-black text-orange-500 italic tracking-tighter">₹{workerMetrics.income.loanRange.min} - ₹{workerMetrics.income.loanRange.max}</div>
                 </div>
               </div>
@@ -484,8 +484,8 @@ const AdminWorkerDetail = () => {
 
           {/* ── Approve / Reject Actions ── */}
           {worker.status !== "verified" && (
-            <div className="rounded-[2.5rem] bg-slate-900 border border-white/5 p-8 shadow-xl space-y-4">
-              <div className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">
+            <div className="rounded-[2.5rem] bg-card border border-border p-8 shadow-xl space-y-4">
+              <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] italic">
                 Admin Decision
               </div>
 
@@ -494,14 +494,14 @@ const AdminWorkerDetail = () => {
                   <button
                     onClick={() => setShowRejectPanel(true)}
                     disabled={actionLoading}
-                    className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-white/5 text-slate-400 border border-white/5 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all text-[11px] font-black uppercase tracking-widest disabled:opacity-40"
+                    className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-secondary text-muted-foreground border border-border hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all text-[11px] font-black uppercase tracking-widest disabled:opacity-40 italic active:scale-95 shadow-sm"
                   >
                     <XCircle size={18} /> Reject
                   </button>
                   <button
                     onClick={() => handleAction("approve")}
                     disabled={actionLoading}
-                    className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-orange-600 text-white shadow-lg shadow-orange-600/20 hover:scale-[1.02] active:scale-95 transition-all text-[11px] font-black uppercase tracking-widest disabled:opacity-40"
+                    className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-orange-600 text-white shadow-lg shadow-orange-600/20 hover:scale-[1.02] active:scale-95 transition-all text-[11px] font-black uppercase tracking-widest disabled:opacity-40 italic"
                   >
                     {actionLoading ? (
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -542,7 +542,7 @@ const AdminWorkerDetail = () => {
                     onChange={(e) => setRejectReason(e.target.value)}
                     placeholder="Or type a custom reason..."
                     rows={2}
-                    className="w-full rounded-xl bg-slate-800 border border-white/10 p-4 text-sm text-white font-bold outline-none focus:border-red-500 transition-all resize-none"
+                    className="w-full rounded-xl bg-secondary border border-border p-4 text-sm text-foreground font-bold outline-none focus:border-red-500 transition-all resize-none italic shadow-inner placeholder:text-muted-foreground/30"
                   />
                   <div className="grid grid-cols-2 gap-3">
                     <button
@@ -550,14 +550,14 @@ const AdminWorkerDetail = () => {
                         setShowRejectPanel(false);
                         setRejectReason("");
                       }}
-                      className="py-3 rounded-xl bg-white/5 text-slate-400 border border-white/5 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all"
+                      className="py-3 rounded-xl bg-secondary text-muted-foreground border border-border text-[10px] font-black uppercase tracking-widest hover:text-foreground transition-all active:scale-95 italic"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={() => handleAction("reject")}
                       disabled={!rejectReason || actionLoading}
-                      className="py-3 rounded-xl bg-red-500 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all disabled:opacity-30"
+                      className="py-3 rounded-xl bg-red-500 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all disabled:opacity-30 active:scale-95 italic"
                     >
                       Confirm Rejection
                     </button>
@@ -568,15 +568,15 @@ const AdminWorkerDetail = () => {
           )}
 
           {worker.status === "verified" && (
-            <div className="rounded-[2.5rem] bg-emerald-500/5 border border-emerald-500/20 p-8 flex items-center gap-4 shadow-xl">
-              <div className="h-12 w-12 flex items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shrink-0">
+            <div className="rounded-[2.5rem] bg-emerald-500/5 border border-emerald-500/20 p-8 flex items-center gap-4 shadow-xl italic">
+              <div className="h-12 w-12 flex items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shrink-0 shadow-inner">
                 <CheckCircle2 size={24} />
               </div>
               <div>
-                <div className="text-sm font-black text-emerald-400 uppercase tracking-tight">
+                <div className="text-sm font-black text-emerald-500 uppercase tracking-tight">
                   Worker Approved
                 </div>
-                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-70">
                   This worker has been verified by admin. Report access is unlocked.
                 </div>
               </div>
@@ -584,39 +584,39 @@ const AdminWorkerDetail = () => {
           )}
 
           {/* ── Work History ── */}
-          <div className="rounded-[2.5rem] bg-slate-900 border border-white/5 shadow-2xl overflow-hidden">
-            <div className="px-8 py-5 border-b border-white/5 bg-white/[0.02] flex items-center gap-3">
+          <div className="rounded-[2.5rem] bg-card border border-border shadow-2xl overflow-hidden">
+            <div className="px-8 py-5 border-b border-border bg-secondary/30 flex items-center gap-3 italic">
               <History size={16} className="text-orange-500" />
-              <span className="font-black text-[10px] uppercase tracking-[0.3em] text-slate-400">
+              <span className="font-black text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
                 Work History
               </span>
-              <span className="ml-auto text-[10px] font-black text-slate-700 uppercase tracking-widest">
+              <span className="ml-auto text-[10px] font-black text-muted-foreground/30 uppercase tracking-widest">
                 {verifications.length} records
               </span>
             </div>
 
             {verifications.length === 0 ? (
               <div className="p-12 text-center space-y-4">
-                <Briefcase size={36} className="mx-auto text-slate-800" />
-                <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.3em]">
+                <Briefcase size={36} className="mx-auto text-muted-foreground/10" />
+                <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.3em] italic">
                   No verified jobs on record yet
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-white/5">
+              <div className="divide-y divide-border">
                 {verifications.map((v) => (
                   <div
                     key={v.id}
-                    className="flex items-center gap-4 px-8 py-5 hover:bg-white/5 transition-all"
+                    className="flex items-center gap-4 px-8 py-5 hover:bg-secondary/50 transition-all font-black italic"
                   >
-                    <div className="h-10 w-10 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center border border-orange-500/10 shrink-0">
+                    <div className="h-10 w-10 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center border border-orange-500/10 shrink-0 shadow-inner">
                       <Briefcase size={16} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-black text-white uppercase tracking-tight truncate">
+                      <div className="text-xs font-black text-foreground uppercase tracking-tight truncate">
                         {v.workerName || v.customerName || "Verification Job"}
                       </div>
-                      <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest flex items-center gap-2 mt-0.5">
+                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2 mt-0.5 opacity-60">
                         <Clock size={9} />
                         {v.timestamp?.toLocaleDateString?.("en-IN", {
                           day: "numeric",
@@ -625,7 +625,7 @@ const AdminWorkerDetail = () => {
                         }) || "N/A"}
                         {v.workerSkill && <span className="text-orange-500/70">· {v.workerSkill}</span>}
                       </div>
-                      {v.comment && <div className="text-[10px] text-slate-500 italic truncate mt-0.5">"{v.comment}"</div>}
+                      {v.comment && <div className="text-[10px] text-muted-foreground italic truncate mt-0.5 opacity-50">"{v.comment}"</div>}
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
                       {[1, 2, 3, 4, 5].map((s) => (
@@ -635,11 +635,11 @@ const AdminWorkerDetail = () => {
                           className={
                             s <= (v.rating || 0)
                               ? "text-orange-500 fill-orange-500"
-                              : "text-slate-700"
+                              : "text-secondary"
                           }
                         />
                       ))}
-                      <span className="text-[10px] font-black text-slate-500 ml-1 uppercase">
+                      <span className="text-[10px] font-black text-muted-foreground ml-1 uppercase opacity-40">
                         {v.rating ? `${v.rating}/5` : "N/R"}
                       </span>
                     </div>

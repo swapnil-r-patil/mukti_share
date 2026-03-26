@@ -95,8 +95,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       {/* Sidebar - Responsive: Hidden on mobile (overlay when open), fixed on desktop */}
       <aside 
         className={cn(
-          "fixed inset-y-0 left-0 z-[60] flex flex-col border-r border-border bg-card transition-all duration-300",
-          isSidebarOpen ? "w-64 translate-x-0" : "w-10 -translate-x-full lg:translate-x-0 lg:w-20"
+          "fixed inset-y-0 left-0 z-[60] flex flex-col border-r border-border bg-card transition-all duration-300 overflow-hidden",
+          isSidebarOpen ? "w-64 translate-x-0" : "-translate-x-full w-64 lg:translate-x-0 lg:w-20"
         )}
       >
         <div className="p-6 flex items-center gap-3">
@@ -104,7 +104,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <ShieldCheck className="text-white" size={24} />
           </div>
           {isSidebarOpen && (
-            <span className="font-black text-white tracking-tighter text-xl italic uppercase">MUKTI CTRL</span>
+            <span className="font-black text-foreground tracking-tighter text-xl italic uppercase">MUKTI CTRL</span>
           )}
         </div>
 
@@ -113,13 +113,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all group ${
+              className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all group active:scale-95 ${
                 location.pathname === item.path 
-                ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20' 
+                ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20 italic' 
                 : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
               }`}
             >
-              <span className={`${location.pathname === item.path ? 'text-white' : 'text-slate-500 group-hover:text-orange-500'}`}>
+              <span className={`${location.pathname === item.path ? 'text-white' : 'text-muted-foreground group-hover:text-orange-500 transition-colors'}`}>
                 {item.icon}
               </span>
               {isSidebarOpen && <span className="font-bold text-sm uppercase tracking-wider">{item.label}</span>}
@@ -127,23 +127,23 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           ))}
         </nav>
 
-        <div className="p-6 border-t border-white/5 space-y-6">
+        <div className="p-6 border-t border-border space-y-6">
           {/* Admin Profile - Downside */}
           {isSidebarOpen && (
             <div className="flex items-center gap-4 px-2">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center font-black text-white shadow-lg italic">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center font-black text-white shadow-lg italic shadow-orange-600/20">
                 {user?.name?.[0]}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-xs font-black text-white uppercase tracking-wider truncate">{user?.name}</span>
-                <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Super Admin</span>
+                <span className="text-xs font-black text-foreground uppercase tracking-wider truncate italic">{user?.name}</span>
+                <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Super Admin</span>
               </div>
             </div>
           )}
 
           {/* Language Selector - Down One */}
           {isSidebarOpen && (
-            <div className="flex items-center gap-1.5 bg-secondary p-1 rounded-xl border border-border">
+            <div className="flex items-center gap-1.5 bg-secondary/50 p-1 rounded-xl border border-border italic">
               {(['en', 'hi', 'mr'] as const).map((lang) => (
                 <button
                   key={lang}
@@ -151,7 +151,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
                     language === lang 
                     ? 'bg-orange-600 text-white shadow-md' 
-                    : 'text-slate-600 hover:text-slate-300'
+                    : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {lang}
@@ -162,10 +162,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
           <button 
             onClick={logout}
-            className="flex items-center gap-4 px-4 py-3 w-full rounded-xl text-slate-500 hover:text-red-500 hover:bg-red-500/5 transition-all group"
+            className="flex items-center gap-4 px-4 py-3 w-full rounded-xl text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-all group active:scale-95 italic font-black"
           >
             <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
-            {isSidebarOpen && <span className="font-bold text-sm uppercase tracking-wider">Log Out</span>}
+            {isSidebarOpen && <span className="text-sm uppercase tracking-wider">Log Out</span>}
           </button>
         </div>
       </aside>
@@ -187,22 +187,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           <div className="flex items-center gap-6">
             <button 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-white lg:hidden"
+              className="p-2 rounded-lg bg-secondary text-muted-foreground hover:text-foreground lg:hidden transition-all active:scale-95"
             >
               {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
             <button 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 rounded-lg bg-secondary text-muted-foreground hover:text-foreground hidden lg:flex"
+              className="p-2 rounded-lg bg-secondary text-muted-foreground hover:text-foreground hidden lg:flex transition-all active:scale-95 shadow-sm"
             >
               <Menu size={20} />
             </button>
             <div className="relative group hidden lg:block">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-orange-500 transition-colors" size={18} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60 group-focus-within:text-orange-500 transition-colors" size={18} />
               <input 
                 type="text" 
                 placeholder="Search..."
-                className="bg-white/5 border border-white/5 rounded-full pl-12 pr-6 py-2 text-sm outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/5 transition-all w-48 sm:w-80 text-white"
+                className="bg-secondary border border-border rounded-full pl-12 pr-6 py-2 text-sm outline-none focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/5 transition-all w-48 sm:w-80 text-foreground font-bold italic shadow-inner"
               />
             </div>
           </div>
@@ -212,11 +212,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <div className="relative">
               <button 
                 onClick={() => setShowNotifications(!showNotifications)}
-                className={`p-2.5 rounded-xl transition-all group relative ${showNotifications ? 'bg-orange-600 text-white shadow-lg' : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'}`}
+                className={`p-2.5 rounded-xl transition-all group relative active:scale-95 ${showNotifications ? 'bg-orange-600 text-white shadow-lg' : 'bg-secondary text-muted-foreground border border-border hover:text-foreground hover:bg-secondary/80'}`}
               >
                 <Bell size={20} className="group-hover:rotate-12 transition-transform" />
                 {pendingRequests > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-card animate-pulse">
+                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-background animate-pulse shadow-lg">
                     {pendingRequests}
                   </span>
                 )}
@@ -244,7 +244,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                         </div>
                         <div className="min-w-0">
                           <div className="font-black text-sm text-foreground italic truncate uppercase tracking-tighter">Verification Needed</div>
-                          <div className="text-[10px] font-bold text-slate-500 mt-1 uppercase leading-relaxed">
+                          <div className="text-[10px] font-bold text-muted-foreground mt-1 uppercase leading-relaxed opacity-70">
                             {pendingRequests} workers awaiting registry approval.
                           </div>
                         </div>

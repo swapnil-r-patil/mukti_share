@@ -39,6 +39,7 @@ const Leaderboard = lazy(() => import("@/pages/Leaderboard"));
 const LiveImpact = lazy(() => import("@/pages/LiveImpact"));
 const SchemesMatcher = lazy(() => import("@/pages/SchemesMatcher"));
 const JobMap = lazy(() => import("@/pages/JobMap"));
+const PublicReport = lazy(() => import("@/pages/PublicReport"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -80,6 +81,7 @@ const MainLayout = () => {
             {/* Public Routes */}
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/impact" element={<LiveImpact />} />
+            <Route path="/report/public/:workerId" element={<PublicReport />} />
 
             {/* Admin Routes */}
             <Route path="/admin/*" element={
