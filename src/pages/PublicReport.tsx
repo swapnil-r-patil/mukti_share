@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "@/lib/firebase";
-import { doc, getDoc, collection, query, where, getDocs, orderBy } from "firebase/firestore";
-import { calculateTrustScore } from "@/utils/trustEngine";
-import { calculateIncomeStats } from "@/utils/financial";
+import { doc, getDoc } from "firebase/firestore";
 import {
   ShieldCheck,
   Star,
@@ -29,116 +27,85 @@ interface WorkerData {
 }
 
 const PublicReport = () => {
-  const { workerId } = useParams<{ workerId: string }>();
-  const [worker, setWorker] = useState<WorkerData | null>(null);
-  const [verifications, setVerifications] = useState<any[]>([]);
+  const { reportId } = useParams<{ reportId: string }>();
+  const [reportData, setReportData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!workerId) {
-      setError("No worker ID provided");
+    if (!reportId) {
+      setError("No report ID provided");
       setLoading(false);
       return;
     }
 
     const fetchData = async () => {
       try {
-        // Fetch from backend endpoint to bypass Firebase security rules for unauthenticated users
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-        const response = await fetch(`${apiUrl}/public-report/${workerId}`);
-        
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError("Worker not found");
-          } else {
-            setError("Failed to load report data");
-          }
+        const snap = await getDoc(doc(db, "public_reports", reportId));
+        if (!snap.exists()) {
+          setError("Report Snapshot not found or unavailable.");
           setLoading(false);
           return;
         }
 
-        const data = await response.json();
-        setWorker(data.worker as WorkerData);
-
-        const vList = data.verifications.map((d: any) => ({
-          ...d,
-          timestamp: new Date(d.timestamp || Date.now())
-        }));
-
-        const wList = data.workRequests.map((d: any) => ({
-          ...d,
-          timestamp: new Date(d.timestamp || Date.now())
-        }));
-
-        // Merge
-        const allJobs = [...vList, ...wList];
-        allJobs.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-        setVerifications(allJobs);
+        setReportData(snap.data());
       } catch (err: any) {
         console.error("Public report fetch error:", err);
-        setError("Failed to load report data");
+        setError("Failed to load report. Ensure Firestore Security Rules allow read for public_reports.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [workerId]);
+  }, [reportId]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent mx-auto mb-4" />
-          <p className="text-slate-600 font-medium">Loading Report...</p>
+          <p className="text-slate-600 font-medium">Loading Authentic Report Snapshot...</p>
         </div>
       </div>
     );
   }
 
-  if (error || !worker) {
+  if (error || !reportData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-red-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md text-center border border-red-100">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-slate-800 mb-2">Report Unavailable</h2>
-          <p className="text-slate-500">{error || "Worker data could not be loaded."}</p>
+          <p className="text-slate-500 text-sm mb-4">{error || "Worker snapshot data could not be loaded."}</p>
+          <div className="bg-red-50 text-red-700 text-xs p-3 rounded text-left font-mono break-words">
+            Developer Note: If this is a live environment, ensure Firebase Firestore rules for "public_reports" are set to allow read.
+          </div>
         </div>
       </div>
     );
   }
 
-  // Calculate metrics
-  const totalJobs = verifications.length;
-  const avgRating = totalJobs > 0
-    ? verifications.reduce((sum, v) => sum + (v.rating || 4), 0) / totalJobs
-    : 0;
-  const repeatCustomerIds = new Set(verifications.map((v) => v.customerId).filter(Boolean));
-  const repeatCustomers = repeatCustomerIds.size;
+  // Pre-calculated metrics extracted from the snapshot
+  const workerName = reportData.workerName || 'Unknown';
+  const skill = reportData.skill || 'General Worker';
+  const location = reportData.location || 'N/A';
+  const phone = reportData.phone || '';
+  
+  const muktiScore = reportData.muktiScore || 0;
+  const confidence = reportData.confidence || 'LOW';
+  const totalJobs = reportData.totalJobs || 0;
+  const avgRating = reportData.avgRating || 0;
+  const activeMonths = reportData.activeMonths || 0;
+  const repeatCustomers = reportData.repeatCustomers || 0;
+  
+  const incomeMin = reportData.incomeMin || 0;
+  const incomeMax = reportData.incomeMax || 0;
 
-  const firstJobDate = verifications.length > 0
-    ? verifications[verifications.length - 1].timestamp
-    : new Date();
-  const activeMonths = Math.max(1, Math.ceil((Date.now() - firstJobDate.getTime()) / (30 * 86400000)));
-
-  // Build a minimal user object for the trust engine
-  const fakeUser = {
-    id: workerId || '',
-    name: worker.name,
-    phone: worker.phone,
-    role: 'worker' as const,
-    otpVerified: true,
-    isDemo: false,
-    lastActive: new Date(),
-  };
-  const muktiScore = Math.max(0, Math.min(100, calculateTrustScore(fakeUser, verifications)));
-  const confidence = muktiScore >= 70 ? "HIGH" : muktiScore >= 40 ? "MEDIUM" : "LOW";
-
-  const income = calculateIncomeStats(verifications);
-
-  const isVerified = worker.isVerifiedByAdmin || worker.status === "verified";
-  const maskedPhone = worker.phone ? `**** **** ${worker.phone.slice(-4)}` : "****";
+  const isVerified = reportData.isVerified;
+  const maskedPhone = phone ? `**** **** ${phone.slice(-4)}` : "****";
+  const recentJobs = reportData.computed?.recentJobs || [];
+  const trustStack = reportData.computed?.trustStack || { otp: true, geo: true, photo: totalJobs > 0, timestamp: true, repeat: repeatCustomers > 0 };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-white">
@@ -169,11 +136,11 @@ const PublicReport = () => {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center text-white text-2xl font-bold shadow-md">
-              {worker.name.charAt(0).toUpperCase()}
+              {workerName.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-800">{worker.name}</h2>
-              <p className="text-sm text-slate-500">{worker.skill || "General Worker"} | {worker.location || "N/A"}</p>
+              <h2 className="text-xl font-bold text-slate-800">{workerName}</h2>
+              <p className="text-sm text-slate-500">{skill} | {location}</p>
               <p className="text-xs text-slate-400 mt-1">Aadhaar: {maskedPhone}</p>
             </div>
           </div>
@@ -222,7 +189,7 @@ const PublicReport = () => {
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
               <p className="text-xs text-slate-500 mb-1">Monthly Income Range</p>
-              <p className="text-base font-bold text-slate-800">INR {income.incomeRange.min.toLocaleString()} - {income.incomeRange.max.toLocaleString()}</p>
+              <p className="text-base font-bold text-slate-800">INR {incomeMin.toLocaleString()} - {incomeMax.toLocaleString()}</p>
             </div>
             <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
               <p className="text-xs text-slate-500 mb-1">Repeat Customers</p>
@@ -238,11 +205,11 @@ const PublicReport = () => {
           </h3>
           <div className="grid grid-cols-5 gap-2">
             {[
-              { label: "OTP", ok: true },
-              { label: "Geo", ok: true },
-              { label: "Photo", ok: totalJobs > 0 },
-              { label: "Time", ok: true },
-              { label: "Repeat", ok: repeatCustomers > 0 },
+              { label: "OTP", ok: trustStack.otp },
+              { label: "Geo", ok: trustStack.geo },
+              { label: "Photo", ok: trustStack.photo },
+              { label: "Time", ok: trustStack.timestamp },
+              { label: "Repeat", ok: trustStack.repeat },
             ].map((item, i) => (
               <div key={i} className="flex flex-col items-center gap-1">
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold ${item.ok ? 'bg-emerald-500' : 'bg-red-400'}`}>
@@ -255,7 +222,7 @@ const PublicReport = () => {
         </div>
 
         {/* Recent Work History */}
-        {verifications.length > 0 && (
+        {recentJobs.length > 0 && (
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
             <h3 className="text-sm font-bold text-[#0B3D91] mb-3 flex items-center gap-2">
               <Briefcase size={16} /> Verified Work History
@@ -271,12 +238,12 @@ const PublicReport = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {verifications.slice(0, 5).map((v, i) => (
+                  {recentJobs.slice(0, 5).map((v: any, i: number) => (
                     <tr key={i} className={`${i % 2 === 0 ? 'bg-slate-50' : 'bg-white'} border-b border-slate-100`}>
                       <td className="py-2 px-3 text-slate-600 text-xs">
-                        {v.timestamp instanceof Date ? v.timestamp.toLocaleDateString("en-IN", { day: "2-digit", month: "short" }) : "Recent"}
+                        {v.date}
                       </td>
-                      <td className="py-2 px-3 text-slate-600 text-xs">{v.workerSkill || v.service || worker.skill || "Service"}</td>
+                      <td className="py-2 px-3 text-slate-600 text-xs">{v.category}</td>
                       <td className="py-2 px-3 text-yellow-600 font-bold text-xs">{(v.rating || 4).toFixed(1)}/5</td>
                       <td className="py-2 px-3 text-emerald-600 font-bold text-xs">VERIFIED</td>
                     </tr>

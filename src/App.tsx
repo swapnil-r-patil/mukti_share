@@ -81,7 +81,7 @@ const MainLayout = () => {
             {/* Public Routes */}
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/impact" element={<LiveImpact />} />
-            <Route path="/report/public/:workerId" element={<PublicReport />} />
+            <Route path="/report/public/:reportId" element={<PublicReport />} />
 
             {/* Admin Routes */}
             <Route path="/admin/*" element={

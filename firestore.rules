@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. Users Profile Collection (Fully Secure)
+    // - Anyone logged in can read profiles
+    // - Only the owner OR an admin can edit their profile
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        (request.auth.uid == userId || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+    
+    // 2. Old Verification Requests (Locked to Authenticated Users)
+    match /verification_requests/{docId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // 3. New Completed Verifications (Locked to Authenticated Users)
+    match /verifications/{docId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // 4. New Work Requests/Job Feed (Fully Secure)
+    // - Customers & Workers must be logged in to view or accept jobs
+    match /work_requests/{docId} {
+      allow read: if request.auth != null;
+      
+      // Ensures that a customer can only create a request if they are logged in,
+      // and a worker can only update (accept) a request if they are logged in.
+      allow create: if request.auth != null && request.resource.data.customerId == request.auth.uid;
+      allow update: if request.auth != null; 
+      allow delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // 5. Public Credit Report Snapshots (QR Code Verification)
+    // - ANYONE can read a snapshot (needed for external QR scans)
+    // - Only logged-in workers/system can create a snapshot
+    // - NEVER allowed to update or delete snapshots publicly
+    match /public_reports/{reportId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if false; 
+    }
+  }
+}

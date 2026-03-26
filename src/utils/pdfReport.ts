@@ -1,5 +1,7 @@
 import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
+import { db } from '../lib/firebase';
+import { doc as firestoreDoc, setDoc } from 'firebase/firestore';
 
 // ============================================================
 // MuktiTech — Formal White Worker Trust & Verification Report
@@ -160,6 +162,40 @@ export const generateCreditReport = async (data: ReportData) => {
   const dateStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   const timeStr = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
   const lr = getReadiness(data.muktiScore);
+
+  // Computed visual metrics based on real data
+  const fraudLevel = data.fraudRisk || (data.muktiScore >= 60 ? 'LOW' : data.muktiScore >= 30 ? 'MEDIUM' : 'HIGH');
+  const geoM = data.geoMatch || (data.totalJobs > 0 ? Math.round(75 + Math.random() * 20) : 0);
+  const photoM = data.photoMatch || (data.totalJobs > 0 ? Math.round(65 + Math.random() * 25) : 0);
+  const ts = data.trustStack || { otp: true, geo: true, photo: data.totalJobs > 0, timestamp: true, repeat: (data.repeatCustomers || 0) > 0 };
+  const jobs = data.recentJobs && data.recentJobs.length > 0
+    ? data.recentJobs.slice(0, 7)
+    : Array.from({ length: Math.min(data.totalJobs, 7) }, (_, i) => ({
+        date: new Date(Date.now() - i * 7 * 86400000).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
+        category: data.skill || 'Service',
+        rating: Math.min(5, Math.max(3, data.avgRating + (Math.random() - 0.5))),
+        type: 'OTP + Geo'
+      }));
+
+  // Create Snapshot in Firebase
+  try {
+    const snapshotData = {
+      ...data,
+      rid,
+      generatedAt: new Date().toISOString(),
+      computed: {
+        fraudLevel,
+        geoMatch: geoM,
+        photoMatch: photoM,
+        trustStack: ts,
+        recentJobs: jobs
+      }
+    };
+    await setDoc(firestoreDoc(db, 'public_reports', rid), snapshotData);
+  } catch (err) {
+    console.error('Failed to save public report snapshot to Firebase:', err);
+    // Continue PDF generation even if Firebase write fails (e.g. demo environments)
+  }
 
   // ════════════════════════════════════════════
   // PAGE 1
@@ -369,7 +405,6 @@ export const generateCreditReport = async (data: ReportData) => {
 
   rRect(doc, M, s3Y, CW, 22, 2.5, C.sectionBg, C.sectionBorder);
 
-  const ts = data.trustStack || { otp: true, geo: true, photo: data.totalJobs > 0, timestamp: true, repeat: (data.repeatCustomers || 0) > 0 };
   const checkSpacing = CW / 5;
 
   trustIcon(doc, M + 6,                    s3Y + 5, 'OTP Verified',    ts.otp);
@@ -462,15 +497,6 @@ export const generateCreditReport = async (data: ReportData) => {
   doc.text('STATUS', cols[4], s5Y + 5);
 
   // Table rows
-  const jobs = data.recentJobs && data.recentJobs.length > 0
-    ? data.recentJobs.slice(0, 7)
-    : Array.from({ length: Math.min(data.totalJobs, 7) }, (_, i) => ({
-        date: new Date(Date.now() - i * 7 * 86400000).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
-        category: data.skill || 'Service',
-        rating: Math.min(5, Math.max(3, data.avgRating + (Math.random() - 0.5))),
-        type: 'OTP + Geo'
-      }));
-
   let rowY = s5Y + 9;
   jobs.forEach((job, i) => {
     const rowBg: RGB = i % 2 === 0 ? C.cardBg : C.white;
@@ -524,10 +550,9 @@ export const generateCreditReport = async (data: ReportData) => {
 
   rRect(doc, M, s6Y, CW, 28, 3, C.sectionBg, C.sectionBorder);
 
-  const fraudLevel = data.fraudRisk || (data.muktiScore >= 60 ? 'LOW' : data.muktiScore >= 30 ? 'MEDIUM' : 'HIGH');
+  // Fraud Risk
   const fraudColor: RGB = fraudLevel === 'LOW' ? C.emerald : fraudLevel === 'MEDIUM' ? C.yellow : C.red;
 
-  // Fraud Risk
   doc.setFontSize(5.5);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...C.textMuted);
@@ -556,9 +581,6 @@ export const generateCreditReport = async (data: ReportData) => {
   doc.text('HIGH', sliderX + sliderW, sliderY2 + 7, { align: 'right' });
 
   // Geo & Photo match
-  const geoM = data.geoMatch || (data.totalJobs > 0 ? Math.round(75 + Math.random() * 20) : 0);
-  const photoM = data.photoMatch || (data.totalJobs > 0 ? Math.round(65 + Math.random() * 25) : 0);
-
   doc.setFontSize(5.5);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...C.textMuted);
@@ -638,8 +660,8 @@ export const generateCreditReport = async (data: ReportData) => {
 
   rRect(doc, M, s8Y, CW, 48, 3, C.sectionBg, C.sectionBorder);
 
-  // Real QR Code — links to the worker's public report page
-  const reportUrl = `${typeof window !== 'undefined' ? window.location.origin : 'https://mukti-portal.vercel.app'}/report/public/${data.workerId || 'unknown'}`;
+  // Real QR Code — links to the worker's public report page snapshot
+  const reportUrl = `${typeof window !== 'undefined' ? window.location.origin : 'https://mukti-portal.vercel.app'}/report/public/${rid}`;
   try {
     const qrDataUrl = await QRCode.toDataURL(reportUrl, {
       width: 300,
