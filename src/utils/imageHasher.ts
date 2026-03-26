@@ -78,18 +78,58 @@ export const checkDuplicate = async (
 };
 
 /**
+ * Compresses a base64 image data URL to ensure it fits well under Firestore limits.
+ */
+export const compressImage = async (dataUrl: string, maxWidth = 800): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", 0.6));
+      } else {
+        resolve(dataUrl); // Fallback
+      }
+    };
+    img.onerror = () => reject(new Error("Failed to load image for compression"));
+    img.src = dataUrl;
+  });
+};
+
+/**
  * Captures a photo from a video element (camera stream).
+ * Automatically scales down and compresses to fit in Firestore.
  * Returns the image as a base64 data URL.
  */
 export const captureFromVideo = (video: HTMLVideoElement): string | null => {
   try {
+    const maxWidth = 800;
+    let width = video.videoWidth || 640;
+    let height = video.videoHeight || 480;
+    
+    // Scale down if needed
+    if (width > maxWidth) {
+      height = Math.round((height * maxWidth) / width);
+      width = maxWidth;
+    }
+    
     const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
+    canvas.width = width;
+    canvas.height = height;
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL("image/jpeg", 0.8);
+    ctx.drawImage(video, 0, 0, width, height);
+    return canvas.toDataURL("image/jpeg", 0.6);
   } catch {
     return null;
   }

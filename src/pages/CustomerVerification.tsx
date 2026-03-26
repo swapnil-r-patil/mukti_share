@@ -10,7 +10,7 @@ import { analyzeReview, NLPResult } from "@/utils/nlpProcessor";
 import { queueOfflineReview, syncOfflineReviews, getOfflineQueueCount } from "@/utils/offlineQueue";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { getCurrentPosition, validateProximity, GeoValidationResult } from "@/utils/geoValidator";
-import { hashImage, checkDuplicate, captureFromVideo } from "@/utils/imageHasher";
+import { hashImage, checkDuplicate, captureFromVideo, compressImage } from "@/utils/imageHasher";
 import { db } from "@/lib/firebase";
 import { parseBudgetToAmount } from "@/utils/financial";
 import { 
@@ -497,9 +497,11 @@ const CustomerVerification = () => {
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64 = reader.result as string;
-      setCapturedPhoto(base64);
+      setIsCapturing(true);
       try {
-        const hash = await hashImage(base64);
+        const compressed = await compressImage(base64);
+        setCapturedPhoto(compressed);
+        const hash = await hashImage(compressed);
         setPhotoHash(hash);
         const targetWorkerId = currentWorker?.id || urlWorkerId || "unknown";
         const dupResult = await checkDuplicate(hash, targetWorkerId);
@@ -507,8 +509,16 @@ const CustomerVerification = () => {
           setIsDuplicatePhoto(true);
           setDuplicateReason(dupResult.fraudReason);
           toast.error("⚠️ Duplicate image detected!");
+        } else {
+          setIsDuplicatePhoto(false);
+          setDuplicateReason("");
         }
-      } catch {}
+      } catch (err) {
+        console.error("Gallery photo processing failed", err);
+        toast.error("Failed to process image. Try a smaller file.");
+      } finally {
+        setIsCapturing(false);
+      }
     };
     reader.readAsDataURL(file);
   };
