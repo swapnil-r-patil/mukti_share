@@ -184,6 +184,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         otpVerified: true,
         lastActive: new Date(),
         lastOtpDate: new Date(),
+        createdAt: new Date(),
         deviceId: getDeviceId(),
         muktiScore: isAdmin ? 100 : 88,
         trustScore: isAdmin ? 100 : 92,
@@ -232,6 +233,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           isVerifiedByAdmin: assignedRole === "worker" ? false : undefined,
           otpVerified: true,
           lastActive: new Date(),
+          createdAt: new Date(),
           points: assignedRole === "customer" ? 0 : undefined,
           badges: assignedRole === "customer" ? [] : undefined,
         };
@@ -313,6 +315,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 1. Direct Firestore Write (Primary Source of Truth)
     const firestoreUser = cleanObject({
       ...newUser,
+      createdAt: serverTimestamp(),
       otpVerified: true,
       lastActive: Timestamp.fromDate(new Date()),
       muktiScore: 0,
@@ -342,7 +345,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.warn("Backend sync suppressed:", err);
     }
 
-    setUser({ ...newUser, otpVerified: true, lastActive: new Date(), points: role === "customer" ? 0 : undefined, badges: role === "customer" ? [] : undefined, isDemo: false } as User);
+    setUser({ ...newUser, createdAt: new Date(), otpVerified: true, lastActive: new Date(), points: role === "customer" ? 0 : undefined, badges: role === "customer" ? [] : undefined, isDemo: false } as User);
   }
 
   async function updateUser(updates: Partial<User>) {

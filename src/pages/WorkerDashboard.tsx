@@ -89,8 +89,8 @@ const WorkerDashboard = () => {
   }, [verificationsList, completedJobs, isDemoWorker]);
   
   // Derived states from user profile
-  const requestSent = (user as any)?.status === 'pending' || (user as any)?.status === 'verified';
-  const isApproved = !!user?.isVerifiedByAdmin || (user as any)?.status === 'verified';
+  const requestSent = user?.status === 'pending' || user?.status === 'verified';
+  const isApproved = !!user?.isVerifiedByAdmin || user?.status === 'verified';
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 30000);
@@ -377,9 +377,9 @@ const WorkerDashboard = () => {
     if (score > 0) {
       const updates: any = {};
       if (score !== (user.muktiScore || 0)) updates.muktiScore = score;
-      if (dashboardData.financial.incomeRange.min !== (user as any).minIncome) updates.minIncome = dashboardData.financial.incomeRange.min;
-      if (dashboardData.financial.incomeRange.max !== (user as any).maxIncome) updates.maxIncome = dashboardData.financial.incomeRange.max;
-      if (dashboardData.financial.totalEarnings !== (user as any).totalEarnings) updates.totalEarnings = dashboardData.financial.totalEarnings;
+      if (dashboardData.financial.incomeRange.min !== user.minIncome) updates.minIncome = dashboardData.financial.incomeRange.min;
+      if (dashboardData.financial.incomeRange.max !== user.maxIncome) updates.maxIncome = dashboardData.financial.incomeRange.max;
+      if (dashboardData.financial.totalEarnings !== user.totalEarnings) updates.totalEarnings = dashboardData.financial.totalEarnings;
       
       if (Object.keys(updates).length > 0) {
         updateDoc(doc(db, "users", user.id), updates).catch(() => {});
@@ -653,7 +653,7 @@ const WorkerDashboard = () => {
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5)
         .map(([skill, count], i) => ({
-          skill: skill.charAt(0).toUpperCase() + skill.slice(1),
+          skill: skill && skill.length > 0 ? skill.charAt(0).toUpperCase() + skill.slice(1) : 'Skill',
           demand: Math.min(100, Math.round(count * 15 + 20)),
           growth: `+${Math.round(Math.random() * 15 + 5)}%`
         }));
@@ -1497,11 +1497,11 @@ const WorkerDashboard = () => {
                       onClick={() => setSelectedVerification(v)}
                     >
                       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-secondary text-lg font-black text-orange-500 border border-border">
-                        {v.customerName.charAt(0)}
+                        {(v.customerName || "Customer").charAt(0)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3">
-                          <span className="text-sm font-black truncate text-foreground uppercase italic">{v.customerName}</span>
+                          <span className="text-sm font-black truncate text-foreground uppercase italic">{v.customerName || "Customer"}</span>
                           {v.isRepeatCustomer && (
                             <span className="shrink-0 rounded-full bg-orange-500/10 px-3 py-1 text-[8px] font-black uppercase text-orange-500 border border-orange-500/10">Loyal</span>
                           )}
@@ -1527,8 +1527,8 @@ const WorkerDashboard = () => {
           <div className="relative w-full max-w-md bg-card p-8 rounded-[2.5rem] border border-orange-500/20 font-black italic">
             <button onClick={() => setSelectedVerification(null)} className="absolute top-8 right-8 p-3 hover:bg-white/5 rounded-2xl"><X size={20} className="text-slate-600" /></button>
             <div className="flex flex-col items-center mt-6">
-              <div className="h-20 w-20 mb-6 flex items-center justify-center rounded-3xl bg-orange-500 text-white text-3xl font-black">{selectedVerification.customerName.charAt(0)}</div>
-              <h3 className="text-2xl font-black text-foreground uppercase">{selectedVerification.customerName}</h3>
+              <div className="h-20 w-20 mb-6 flex items-center justify-center rounded-3xl bg-orange-500 text-white text-3xl font-black">{((selectedVerification.customerName || "Customer") as string).charAt(0)}</div>
+              <h3 className="text-2xl font-black text-foreground uppercase">{selectedVerification.customerName || "Customer"}</h3>
               <div className="mt-6 bg-white/5 px-6 py-2.5 rounded-2xl border border-border"><span className="text-sm font-black text-orange-500 italic">{selectedVerification.rating}.0 Rating</span></div>
             </div>
             <div className="mt-10 p-6 rounded-3xl bg-white/5 border border-border">

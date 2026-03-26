@@ -150,7 +150,7 @@ const AppHeader = () => {
                   <img src={user.photo} alt={user.name} className="h-full w-full object-cover" />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-orange-500/10 text-orange-500 font-black text-sm italic uppercase">
-                    {user.name.charAt(0)}
+                    {(user.name || "U").charAt(0)}
                   </div>
                 )}
               </div>

@@ -209,7 +209,7 @@ const WorkerProfile = () => {
                   <img src={editPhoto} alt="Profile" className="h-full w-full object-cover" />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-orange-500 text-5xl font-black text-foreground italic">
-                    {(editName || user.name).charAt(0)}
+                    {(editName || user.name || "U").charAt(0)}
                   </div>
                 )}
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 text-foreground opacity-0 transition-opacity group-hover:opacity-100">
@@ -241,7 +241,7 @@ const WorkerProfile = () => {
               <div className="absolute -top-24 -right-24 h-48 w-48 bg-orange-500/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000" />
               <div className="relative mb-6">
                  <div className="h-32 w-32 rounded-[2.5rem] bg-orange-500 flex items-center justify-center text-5xl font-black text-foreground italic shadow-[0_0_40px_rgba(249,115,22,0.3)] overflow-hidden border-4 border-border">
-                    {user.photo ? <img src={user.photo} alt="Profile" className="h-full w-full object-cover" /> : user.name.charAt(0)}
+                    {user.photo ? <img src={user.photo} alt="Profile" className="h-full w-full object-cover" /> : (user.name || "U").charAt(0)}
                  </div>
                  <div className="absolute -bottom-2 -right-2 p-3 rounded-2xl bg-secondary border border-orange-500/30 text-orange-500 shadow-xl">
                     <Award size={20} />

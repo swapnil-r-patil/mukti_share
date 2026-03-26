@@ -27,4 +27,9 @@ export interface User {
   trustScore?: number;
   customer_type?: 0 | 1; // 0 = Regular (Monthly), 1 = One-time (Dynamic)
   isVerifiedByAdmin?: boolean;
+  createdAt?: any;
+  minIncome?: number;
+  maxIncome?: number;
+  totalEarnings?: number;
+  status?: "not verified" | "pending" | "verified";
 }
