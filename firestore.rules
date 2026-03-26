@@ -3,8 +3,6 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     // 1. Users Profile Collection (Fully Secure)
-    // - Anyone logged in can read profiles
-    // - Only the owner OR an admin can edit their profile
     match /users/{userId} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && 
@@ -23,12 +21,8 @@ service cloud.firestore {
     }
     
     // 4. New Work Requests/Job Feed (Fully Secure)
-    // - Customers & Workers must be logged in to view or accept jobs
     match /work_requests/{docId} {
       allow read: if request.auth != null;
-      
-      // Ensures that a customer can only create a request if they are logged in,
-      // and a worker can only update (accept) a request if they are logged in.
       allow create: if request.auth != null && request.resource.data.customerId == request.auth.uid;
       allow update: if request.auth != null; 
       allow delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
@@ -36,11 +30,11 @@ service cloud.firestore {
 
     // 5. Public Credit Report Snapshots (QR Code Verification)
     // - ANYONE can read a snapshot (needed for external QR scans)
-    // - ANYONE generating a PDF can save the snapshot (useful for Demo Workers)
+    // - ONLY logged-in verified users/workers can create a snapshot
     // - NEVER allowed to update or delete snapshots publicly
     match /public_reports/{reportId} {
       allow read: if true;
-      allow create: if true;
+      allow create: if request.auth != null;
       allow update, delete: if false; 
     }
   }
