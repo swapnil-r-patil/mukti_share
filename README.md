@@ -90,15 +90,51 @@
 
 ---
 
-## Getting Started
+## 🛠️ TECHNOLOGY STACK
+
+### 🌐 Frontend (User Interface)
+- **React (TypeScript)**: Core framework for the dynamic dashboard.
+- **Tailwind CSS**: Modern, utility-first styling.
+- **Radix UI / Shadcn**: Professional UI components (Dialogs, Tabs, Toasts).
+- **TanStack Query (React Query)**: Efficient data fetching and real-time sync.
+- **Leaflet**: Interactive maps for location tracking.
+- **Recharts**: Data visualization and analytics dashboards.
+- **Framer Motion**: Smooth micro-animations and transitions.
+- **QR Code System**: Secure identity verification via `qrcode.react` and `jsqr`.
+
+### ⚙️ Backend (API & Logic)
+- **Node.js & Express**: Server-side runtime and web framework.
+- **TypeScript**: Shared type safety across the entire stack.
+- **Firebase Admin SDK**: Secure server-side database and auth management.
+- **PDFKit**: Automated generation of verified work reports.
+
+### 🗄️ Database & Security
+- **Firebase Firestore**: Real-time NoSQL database.
+- **Firebase Auth**: Secure Email/Password and Google authentication.
+- **Firebase Storage**: Hosting for documents and profile media.
+- **Zod**: Strict schema validation for data integrity.
+
+### 🤖 Machine Learning (ML) Service
+- **Python (Flask)**: Microservice for intelligent processing.
+- **NLP (Natural Language Processing)**: Sentiment analysis and skill extraction via `TextBlob`.
+- **Fraud Detection**: Risk scoring engine to identify suspicious patterns.
+
+---
+
+## 🚀 Getting Started
 
 To run the project locally:
 
-1. Install dependencies:
+1. **Install Frontend Dependencies**:
    ```bash
    npm install
    ```
-2. Start the development server:
+
+2. **Initialize Environment Variables**:
+   Create a `.env` file in the root and `/backend` directories using the provided `.env.example` templates.
+
+3. **Start Development Servers**:
    ```bash
-   npm run dev
+   # Run both frontend and backend
+   npm run dev:all
    ```
