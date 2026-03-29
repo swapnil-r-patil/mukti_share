@@ -30,3 +30,4 @@ debug_*
 
 # Secrets
 /backend/secrets
+/backend/data/
